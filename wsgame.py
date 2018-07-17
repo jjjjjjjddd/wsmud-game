@@ -187,7 +187,6 @@ class wsgame:
         def run(*args):
             time.sleep(1)
             ws.send(self.acctoken)
-            #ws.send("login 0f6124bda4e")
             ws.send("login "+self.palyer)
             time.sleep(1)
             ws.send("stopstate")
