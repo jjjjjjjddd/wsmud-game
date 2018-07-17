@@ -1,7 +1,16 @@
 # wsmud-game
 武神传说日常脚本
 ---
+运行需要安装websocket-client
+
+pip install websocket-client
+
+python demo.py 
+
+配置说明:
+
 主要修改 demo.py中的main 部分 创建thread的参数
+
 参数1
 ![参数1](https://i.loli.net/2018/07/17/5b4d5b9a05b18.png)
 
@@ -15,7 +24,7 @@
 脚本说明:
 
     运行流程
-    
+
     1:登陆判断是否完成师门
 
     2:未完成,去买20个包子
