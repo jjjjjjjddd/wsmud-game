@@ -7,15 +7,15 @@ class MyThread(threading.Thread):
         self.serverip=serverip
         self.acctoken =acctoken
         self.player=player
-        self.sfname=sfname
+        self.sfcode=sfname
     def run(self):
-        wsg = wsgame(self.serverip,self.acctoken,self.player,self.sfname)
+        wsg = wsgame(self.serverip,self.acctoken,self.player,self.sfcode)
         wsg.start()
 
 if __name__ == "__main__":
-    #第一个参数是服务器id,第二个参数是用户登陆时的token,需要在浏览器抓,第三个是角色id ,第四个是,师父的名字,例如"苏星河"
-    wsg = MyThread("ws://120.78.75.229:25631",
+    #第一个参数是服务器id,第二个参数是用户登陆时的token,需要在浏览器抓,第三个是角色id ,第四个是,师门id
+    #1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
+    wsg2= MyThread("ws://120.78.75.229:25631",
     "",
-    "",
-    "")
-    wsg.start()
+    "",5)
+    wsg2.start()

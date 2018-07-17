@@ -18,11 +18,12 @@ class wsgame:
     serverip=''
     acctoken = ''
     palyer =''
-    def __init__(self, serverip, acctoken, palyer,sfname):
+    smcode=1
+    def __init__(self, serverip, acctoken, palyer,smcode):
       self.serverip = serverip
       self.acctoken=acctoken
       self.palyer = palyer
-      self.sfname=sfname
+      self.smcode=smcode
 
     def quote_keys_for_json(self,json_str):
         quote_pat = re.compile(r'".*?"')
@@ -41,7 +42,24 @@ class wsgame:
     
         
     def sm(self,ws):
-        ws.send("jh fam 5 start")
+        ws.send("jh fam "+self.smcode+" start")
+        if self.smcode==1:
+            self.sfname = "宋远桥"
+            ws.send("go north")
+        elif  self.smcode == 2:
+            self.sfname = "清乐比丘"
+        elif  self.smcode==3:
+            self.sfname = "高根明"
+        elif  self.smcode==4:
+            self.sfname = "苏梦清"
+            ws.send("go west")
+        elif  self.smcode==5:
+            self.sfname = "苏星河"
+        elif  self.smcode==6:
+            self.sfname = "左全"
+            ws.send("go down")
+
+
         time.sleep(1)
         print(self.smflag)
         while self.smflag:

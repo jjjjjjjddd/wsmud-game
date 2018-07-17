@@ -8,17 +8,20 @@
 参数2 3
 ![参数2 3](https://i.loli.net/2018/07/17/5b4d5b9a2469c.png)
 
-参数4 为 师父的名字,
+参数4 为 师门编号
 
-另外,每个师父的所在位置不同,所以找到师父位置的函数也需要进行修改
+   1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
 
-逍遥的例子如下:
-```
-    def sm(self,ws):
-        ws.send("jh fam 5 start")
-        time.sleep(1)
-        print(self.smflag)
-        while self.smflag:
-            time.sleep(1)
-            ws.send("task sm "+self.smid)
-```
+脚本说明:
+
+    运行流程
+    
+    1:登陆判断是否完成师门
+
+    2:未完成,去买20个包子
+
+    3:回到师门,刷到包子任务提交
+
+    4:完成师门之后,刷副本, 副本为进入直接退出 ,需要修改的话,修改 wsgame.py中fuben以及richang函数
+
+    5:每次刷完副本都会判断是否完成每日签到,完成则挖矿,否则继续副本
