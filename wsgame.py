@@ -42,7 +42,7 @@ class wsgame:
     
         
     def sm(self,ws):
-        ws.send("jh fam "+self.smcode+" start")
+        ws.send("jh fam "+str(self.smcode)+" start")
         if self.smcode==1:
             self.sfname = "宋远桥"
             ws.send("go north")
