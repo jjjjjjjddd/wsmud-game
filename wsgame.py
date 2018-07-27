@@ -19,7 +19,7 @@ class wsgame:
     acctoken = ''
     palyer =''
     smcode=1
-    def __init__(self, serverip, acctoken, palyer,smcode):
+    def __init__(self, serverip, acctoken, palyer="",smcode=""):
       self.serverip = serverip
       self.acctoken=acctoken
       self.palyer = palyer
