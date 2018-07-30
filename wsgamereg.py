@@ -395,7 +395,8 @@ class MyThread(threading.Thread):
     def run(self):
         wsg = wsgame(self.serverip,self.acctoken)
         wsg.start()
-        
+###
+###获得登陆token
 class GetLoginCookie:
     u=''
     p=''
