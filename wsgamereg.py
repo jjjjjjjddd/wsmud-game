@@ -4,9 +4,12 @@ import re
 import threading
 import time
 import websocket
-
+import sys
+import urllib.request
+import urllib.parse
 from name import MkChineseName
-
+from http import cookiejar
+import json
 try:
     import thread
 except ImportError:
@@ -392,9 +395,32 @@ class MyThread(threading.Thread):
     def run(self):
         wsg = wsgame(self.serverip,self.acctoken)
         wsg.start()
+        
+class GetLoginCookie:
+    u=''
+    p=''
+    def __init__(self,username,password):
+        self.username = username
+        self.password =password
+        self.post()
+    def getCookie(self):
+        return self.u +' '+self.p
+    def post(self):
+        cookie = cookiejar.CookieJar()
+        post_url='http://game.wsmud.com/UserAPI/Login'
+        handler = urllib.request.HTTPCookieProcessor(cookie) #创建cookie处理对象
+        opener = urllib.request.build_opener(handler) #构建携带cookie的打开方式
+        data = {'code':self.username,'pwd':self.password}
+        data = urllib.parse.urlencode(data).encode('utf-8')
+        req = urllib.request.Request(post_url,data,method = 'POST') #创建请求
+        html = opener.open(req).read() #开启请求,保存登录cookie
+        for item in cookie:
+            if(item.name=='p'):
+                self.p=item.value
+            if(item.name=='u'):
+                self.u=item.value
 if __name__ == "__main__":
     #第一个参数是服务器id,第二个参数是用户登陆时的token,需要在浏览器抓,第三个是角色id ,第四个是,师门id
     #1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
-    for i in range(100):
-        wsg = MyThread('','')
-        wsg.start()
+    c = GetLoginCookie('','')
+    print(c.getCookie())
