@@ -47,6 +47,9 @@ class wsgame:
     palyeraction = {"pack":'pack none',"nl":'dazuo',"ls":'liaoshang',"z":'zuo',"sx":'score',"edu":'study ',"set":'select ',"k":'kill ',"sq":'get all from ',"b":'buy ',"zb":'eq ',"qxzb":'uneq ',"wa":'wa'}
     wkaction=['jh fam 0 start','go west','go west','go west','go west','wa']
     fubenac=['jh fb 0 start1','cr cd/wen/damen','cr','cr over','taskover signin']
+    maibaozi=['jh fam 0 start','go north','go north','go east','list'+ dxerid,'sell all','buy 20 '+ baoziid+" from "+ dxerid]
+    xsrwaction= ['actions','select '+ zyzid,'guid '+ zyzid ,'zuo','zuo2 yizi','go east','pack','study '+ quanjiaoid,'next '+ zyzid,'go south','kill '+ mutourenid,'get all from '+ mutourenstid,'go north','next '+ zyzid,'pack none','study '+ neigongid,'liaoshang','next '+ zyzid,'ask6 '+ zyzid]
+    maigao =['jh fam 0 start','go east','go east','go south','list '+ tjid,'buy 1 '+ tiegaoid+' from '+ tjid,'pack','eq '+ tiegaoid]
     def __init__(self, serverip, acctoken, palyer="",smcode=""):
       self.serverip = serverip
       self.acctoken=acctoken
@@ -69,12 +72,14 @@ class wsgame:
         return json_str
 
     def xinshourenwu(self,ws):
-        self.xsrwaction= ['actions','select '+self.zyzid,'guid '+self.zyzid ,'zuo','zuo2 yizi','go east','pack','study '+self.quanjiaoid,'next '+self.zyzid,'go south','kill '+self.mutourenid,'get all from '+self.mutourenstid,'go north','next '+self.zyzid,'pack none','study '+self.neigongid,'liaoshang','next '+self.zyzid,'ask6 '+self.zyzid]
+        
         for ac in self.xsrwaction:
             print(ac)
             ws.send(ac)
             if ac == 'pack':
                 time.sleep(1)
+            if 'select' or 'guid' or 'next' or 'ask' in ac:
+                ws.send(ac+self.zyzid)
             if 'study' in ac:
                 ws.send(ac +self.quanjiaoid)
                 ws.send(ac +self.neigongid)
@@ -108,13 +113,13 @@ class wsgame:
         json_array = json.loads(json_str)
         json_array.append({"userid":e['id']})
         jsObj = json.dumps(json_array)
-        print("保存账号"+e.id)
+        print("保存账号"+e['id'])
         with open('user/users.json', "w") as fw:  
             fw.write(jsObj)  
             fw.close()
 
     def buytiegao(self,ws):
-        self.maigao =['jh fam 0 start','go east','go east','go south','list '+self.tjid,'buy 1 '+self.tiegaoid+' from '+self.tjid,'pack','eq '+self.tiegaoid]
+        
         print("tiegao")
         print(self.tjid)
         print(self.tiegaoid)
@@ -163,7 +168,6 @@ class wsgame:
             ws.send("task sm "+self.smid)
 
     def baozi(self,ws):
-        self.maibaozi=['jh fam 0 start','go north','go north','go east','list'+self.dxerid,'sell all','buy 20 '+self.baoziid+" from "+self.dxerid]
         for ac in self.maibaozi:
             ws.send('ac')
             if 'list' in ac:
@@ -306,7 +310,7 @@ class wsgame:
     def on_message(self,ws, message):
         if "{" and "}" in message: 
             d = self.quote_keys_for_json(message)
-            #print(d)
+            print(d)
             e = json.loads(d)
             if e['type']=="dialog":
                 self.lianxi(ws,e)
@@ -316,8 +320,6 @@ class wsgame:
                 self.getsmid(ws,e)
             if e['type']=="itemadd":
                 self.getmtrid(ws,e)
-            if e['type']=="login":
-                self.saveUserId(ws,e)
             if e['type']=="room":
                 self.saveStatic(ws,e)
         else:
@@ -382,10 +384,17 @@ class wsgame:
         ws.on_open = self.on_open
         ws.run_forever()
 
-
+class MyThread(threading.Thread):
+    def __init__(self,serverip,acctoken,player="",sfname=""):
+        super(MyThread, self).__init__()
+        self.serverip=serverip
+        self.acctoken =acctoken
+    def run(self):
+        wsg = wsgame(self.serverip,self.acctoken)
+        wsg.start()
 if __name__ == "__main__":
     #第一个参数是服务器id,第二个参数是用户登陆时的token,需要在浏览器抓,第三个是角色id ,第四个是,师门id
     #1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
-    wsg = wsgame("ws://47.106.8.121:25631",
-    "")
-    wsg.start()
+    for i in range(100):
+        wsg = MyThread('','')
+        wsg.start()
