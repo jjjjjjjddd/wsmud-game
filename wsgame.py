@@ -23,6 +23,7 @@ class wsgame:
     palyer =''
     smcode=1
     die = False
+    myname = ''
     def __init__(self, serverip, acctoken, palyer="",smcode=""):
       self.serverip = serverip
       self.acctoken=acctoken
@@ -32,7 +33,8 @@ class wsgame:
     def convet_json(self,json_str):
         json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s,n:n))())
         return json_obj
-    
+    def logCat(self,msg):
+        print("{0}: {1}: {2}".format(time.time(),self.myname, msg))
         
     def sm(self,ws):
         ws.send("jh fam "+str(self.smcode)+" start")
@@ -54,7 +56,7 @@ class wsgame:
 
 
         time.sleep(1)
-        print(self.smflag)
+        self.logCat(self.smflag)
         while self.smflag:
             time.sleep(1)
             ws.send("task sm "+self.smid)
@@ -91,6 +93,7 @@ class wsgame:
 
     def fuben(self,ws):
         ws.send('pack')
+        time.sleep(5)
         for i in range(10):
             time.sleep(1)
             self.richang(ws)
@@ -121,53 +124,53 @@ class wsgame:
         if e['dialog']=='list':
             self.getitemsId(ws,e)
         if e['dialog']=="skills":
-            print("技能 "+e['id'] +" 提升到 "+ str(e['exp'])+"%")
+            self.logCat("技能 "+e['id'] +" 提升到 "+ str(e['exp'])+"%")
             if 'level' in e:
-                #print(e)
-                print("升级了"+"技能 "+e['id'] +"到"+str(e['level'])+"级")
+                #self.logCat(e)
+                self.logCat("升级了"+"技能 "+e['id'] +"到"+str(e['level'])+"级")
         if self.yjdid =="":
             if e['dialog']=="pack":
                 if 'items' in e:
                     for item in e['items']:
-                        print(item)
+                        #self.logCat(item)
                         if "养精丹" in item['name']:
                             self.yjdid = item['id']
-                            print("养精丹id:"+self.yjdid)
+                            self.logCat("养精丹id:"+self.yjdid)
                             break
     def getsmid(self,ws ,e):
         if 'items' in e:
             for item in e["items"]:
-                #print(item)
+                #self.logCat(item)
                 if item==0:
                     continue
                 if self.smid =='':
                     if self.sfname in item["name"]:
                         self.smid = item['id']
-                        print("师门id:"+self.smid)
+                        self.logCat("师门id:"+self.smid)
                         break
                 if self.dxerid =='':
                     if self.dxename in item["name"]:
                         self.dxerid = item['id']
-                        print("店小二id:"+self.dxerid)
+                        self.logCat("店小二id:"+self.dxerid)
                         break
     def getitemsId(self,ws,e):
         if self.dxerid == '':
             return
         if 'seller' in e:
-            print("getbaozi")
+            self.logCat("getbaozi")
             if e['seller'] == self.dxerid:
-                print("getbaozi1")
+                self.logCat("getbaozi1")
                 for sellitem in e['selllist']:
                     if sellitem ==0:
                         continue
                     if self.baoziid =="":
                         if "包子" in sellitem['name']:
                             self.baoziid =sellitem['id']
-                            print("包子id:"+self.baoziid)
+                            self.logCat("包子id:"+self.baoziid)
                             break
                     
     def smcmd(self,ws,e):
-        print(e['items'][0]['cmd'])
+        self.logCat(e['items'][0]['cmd'])
         ws.send(e['items'][0]['cmd'])
     def relive(self,ws,e):
         ws.send('relive')
@@ -181,23 +184,32 @@ class wsgame:
         ws.send('pack')
         ws.send("taskover signin")
         time.sleep(1)
-        print("3")
+        self.logCat("3")
         time.sleep(1)
-        print("2")
+        self.logCat("2")
         time.sleep(1)
-        print("1")
+        self.logCat("1")
+        time.sleep(1)
+        ws.send('tm aa')
+        time.sleep(1)
+    def getmyname(self,ws,e):
+        if e['ch']=='tm' and e['uid']==self.palyer:
+            self.myname = e['name']
+
     def on_message(self,ws, message):
         if "{" and "}" in message: 
             e = self.convet_json(message)
-            #print(d)
+            #self.logCat(e)
             if e['type']=="dialog":
                 self.lianxi(ws,e)
             if e['type']=="cmds":
                 self.smcmd(ws,e)
             if e['type']=="items":
                 self.getsmid(ws,e)
+            if e['type']=="msg":
+                self.getmyname(ws,e)
         else:
-            print(message)
+            self.logCat(message)
             if "你今天已经签到了" in message:
                 self.rc = True
             if "休息一下吧" in message:
@@ -206,16 +218,16 @@ class wsgame:
                 self.relive(ws,message)
                 
     def on_error(self,ws, error):
-        print(error)
+        self.logCat(error)
 
     def on_close(self,ws):
-        print("### closed ###")
+        self.logCat("### closed ###")
 
     def on_open(self,ws):
         def run(*args):
             time.sleep(1)
             self.login(ws)
-            print(self.rc)
+            self.logCat(self.rc)
             while True:
                 if not self.rc:
                     self.baozi(ws)
@@ -224,8 +236,8 @@ class wsgame:
                 if not self.die:
                     break
             self.wakuang(ws)
-            #ws.close()
-            print("thread terminating...")
+            ws.close()
+            self.logCat("thread terminating...")
         thread.start_new_thread(run, ())
 
     def start(self):

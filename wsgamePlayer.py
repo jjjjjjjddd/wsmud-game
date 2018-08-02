@@ -22,7 +22,7 @@ class wsgamePlayer:
         return json_obj
 
     def on_message(self,ws, message):
-        print(message)
+        #print(message)
         pobj = self.convet_json(message)
         if(pobj['type']=='roles'):
             for item in pobj['roles']:
@@ -33,14 +33,14 @@ class wsgamePlayer:
         print(error)
 
     def on_close(self,ws):
-        print("### closed ###")
+        print("### socket closed ###")
 
     def on_open(self,ws):
         def run(*args):
             ws.send(self.acctoken)
             time.sleep(1)
             ws.close()
-            print("thread terminating...")
+            print("获取角色列表成功")
         thread.start_new_thread(run, ())
     def start(self):
         websocket.enableTrace(True)
