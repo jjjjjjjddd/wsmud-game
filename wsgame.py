@@ -90,6 +90,7 @@ class wsgame:
         ws.send("taskover signin")
 
     def fuben(self,ws):
+        ws.send('pack')
         for i in range(10):
             time.sleep(1)
             self.richang(ws)
@@ -171,7 +172,20 @@ class wsgame:
     def relive(self,ws,e):
         ws.send('relive')
         self.die=True
-        
+    def login(self,ws):
+        ws.send(self.acctoken)
+        ws.send("login "+self.palyer)
+        time.sleep(1)
+        ws.send('setting ban_pk 1')
+        ws.send("stopstate")
+        ws.send('pack')
+        ws.send("taskover signin")
+        time.sleep(1)
+        print("3")
+        time.sleep(1)
+        print("2")
+        time.sleep(1)
+        print("1")
     def on_message(self,ws, message):
         if "{" and "}" in message: 
             e = self.convet_json(message)
@@ -200,19 +214,7 @@ class wsgame:
     def on_open(self,ws):
         def run(*args):
             time.sleep(1)
-            ws.send(self.acctoken)
-            ws.send("login "+self.palyer)
-            time.sleep(1)
-            ws.send('setting ban_pk 1')
-            ws.send("stopstate")
-            ws.send('pack')
-            ws.send("taskover signin")
-            time.sleep(1)
-            print("3")
-            time.sleep(1)
-            print("2")
-            time.sleep(1)
-            print("1")
+            self.login(ws)
             print(self.rc)
             while True:
                 if not self.rc:
