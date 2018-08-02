@@ -184,7 +184,8 @@ class wsgame:
                 self.rc = True
             if "休息一下吧" in message:
                 self.smflag = False
-                
+            if "灵魂状态" in message:
+                ws.send("")
                 
     def on_error(self,ws, error):
         print(error)
@@ -198,6 +199,7 @@ class wsgame:
             ws.send(self.acctoken)
             ws.send("login "+self.palyer)
             time.sleep(1)
+            ws.send('setting ban_pk 1')
             ws.send("stopstate")
             ws.send('pack')
             ws.send("taskover signin")
