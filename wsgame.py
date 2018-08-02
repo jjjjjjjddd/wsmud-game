@@ -22,6 +22,7 @@ class wsgame:
     acctoken = ''
     palyer =''
     smcode=1
+    die = False
     def __init__(self, serverip, acctoken, palyer="",smcode=""):
       self.serverip = serverip
       self.acctoken=acctoken
@@ -167,6 +168,9 @@ class wsgame:
     def smcmd(self,ws,e):
         print(e['items'][0]['cmd'])
         ws.send(e['items'][0]['cmd'])
+    def relive(self,ws,e):
+        ws.send('relive')
+        self.die=True
         
     def on_message(self,ws, message):
         if "{" and "}" in message: 
@@ -185,7 +189,7 @@ class wsgame:
             if "休息一下吧" in message:
                 self.smflag = False
             if "灵魂状态" in message:
-                ws.send("")
+                self.relive(ws,message)
                 
     def on_error(self,ws, error):
         print(error)
@@ -210,10 +214,13 @@ class wsgame:
             time.sleep(1)
             print("1")
             print(self.rc)
-            if not self.rc:
-                self.baozi(ws)
-                self.sm(ws)
-                self.fuben(ws)
+            while True:
+                if not self.rc:
+                    self.baozi(ws)
+                    self.sm(ws)
+                    self.fuben(ws)
+                if not self.die:
+                    break
             self.wakuang(ws)
             #ws.close()
             print("thread terminating...")
