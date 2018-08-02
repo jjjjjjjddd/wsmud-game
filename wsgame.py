@@ -1,3 +1,6 @@
+#edit by knva
+#tool VSCODE
+#time 2018-8-2 10:12:27
 import websocket
 try:
     import thread
@@ -25,20 +28,9 @@ class wsgame:
       self.palyer = palyer
       self.smcode=smcode
 
-    def quote_keys_for_json(self,json_str):
-        quote_pat = re.compile(r'".*?"')
-        a = quote_pat.findall(json_str)
-        json_str = quote_pat.sub('@', json_str)
-        key_pat = re.compile(r'(\w+):')
-        json_str = key_pat.sub(r'"\1":', json_str)
-        assert json_str.count('@') == len(a)
-        count = -1
-        def put_back_values(match):
-            nonlocal count
-            count += 1
-            return a[count]
-        json_str = re.sub('@', put_back_values, json_str)
-        return json_str
+    def convet_json(self,json_str):
+        json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s,n:n))())
+        return json_obj
     
         
     def sm(self,ws):
@@ -178,9 +170,8 @@ class wsgame:
         
     def on_message(self,ws, message):
         if "{" and "}" in message: 
-            d = self.quote_keys_for_json(message)
+            e = self.convet_json(message)
             #print(d)
-            e = json.loads(d)
             if e['type']=="dialog":
                 self.lianxi(ws,e)
             if e['type']=="cmds":

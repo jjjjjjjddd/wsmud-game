@@ -1,3 +1,6 @@
+#edit by knva
+#tool VSCODE
+#time 2018-8-2 10:12:27
 import json
 import os
 import re
@@ -59,23 +62,11 @@ class wsgame:
       self.palyer = palyer
       self.smcode=smcode
 
-    def quote_keys_for_json(self,json_str):
-        quote_pat = re.compile(r'".*?"')
-        a = quote_pat.findall(json_str)
-        json_str = quote_pat.sub('@', json_str)
-        key_pat = re.compile(r'(\w+):')
-        json_str = key_pat.sub(r'"\1":', json_str)
-        assert json_str.count('@') == len(a)
-        count = -1
-        def put_back_values(match):
-            nonlocal count
-            count += 1
-            return a[count]
-        json_str = re.sub('@', put_back_values, json_str)
-        return json_str
+    def convet_json(self,json_str):
+        json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s,n:n))())
+        return json_obj
 
     def xinshourenwu(self,ws):
-        
         for ac in self.xsrwaction:
             print(ac)
             ws.send(ac)
@@ -175,6 +166,10 @@ class wsgame:
             ws.send('ac')
             if 'list' in ac:
                 time.sleep(1)
+                ws.send("list "+self.dxerid)
+            if 'buy' in ac:
+                time.sleep(1)
+                ws.send("buy 1 "+self.baoziid+" from "+self.dxerid)
 
     def richang(self,ws):
         if self.rc:
@@ -312,9 +307,7 @@ class wsgame:
         
     def on_message(self,ws, message):
         if "{" and "}" in message: 
-            d = self.quote_keys_for_json(message)
-            print(d)
-            e = json.loads(d)
+            e = self.convet_json(message)
             if e['type']=="dialog":
                 self.lianxi(ws,e)
             if e['type']=="cmds":
@@ -344,6 +337,10 @@ class wsgame:
             time.sleep(1)
             ws.send(self.acctoken)
             # ws.send("login "+self.palyer)
+            # time.sleep(1)
+            # ws.send("stopstate")
+            # ws.send('pack')
+            # ws.send("taskover signin")
             # time.sleep(1)
             # ws.send("stopstate")
             # ws.send('pack')
@@ -387,6 +384,8 @@ class wsgame:
         ws.on_open = self.on_open
         ws.run_forever()
 
+
+
 class MyThread(threading.Thread):
     def __init__(self,serverip,acctoken,player="",sfname=""):
         super(MyThread, self).__init__()
@@ -421,7 +420,9 @@ class GetLoginCookie:
             if(item.name=='u'):
                 self.u=item.value
 if __name__ == "__main__":
-    #第一个参数是服务器id,第二个参数是用户登陆时的token,需要在浏览器抓,第三个是角色id ,第四个是,师门id
-    #1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
+
     c = GetLoginCookie('','')
-    print(c.getCookie())
+    for i in range(30):
+        wsg= MyThread("ws://120.78.75.229:25631",c.getCookie())
+        wsg.start()
+    time.sleep(100000)

@@ -11,11 +11,13 @@ python demo.py
 
 主要修改 demo.py中的main 部分 创建thread的参数
 
-参数1
-![参数1](https://i.loli.net/2018/07/17/5b4d5b9a05b18.png)
+参数1 为账户,参数2为密码
 
-参数2 3
-![参数2 3](https://i.loli.net/2018/07/17/5b4d5b9a2469c.png)
+c = GetLoginCookie('','')
+
+
+
+wsg2= MyThread(serverurl,utoken,pid,5)
 
 参数4 为 师门编号
 
