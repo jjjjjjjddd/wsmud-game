@@ -362,9 +362,9 @@ class wsgame:
             while True:
                 if not self.rc:
                     print('rc')
-                    #self.baozi(ws)
-                    #self.sm(ws)
-                    #self.fuben(ws)
+                    self.baozi(ws)
+                    self.sm(ws)
+                    self.fuben(ws)
                 if not self.die:
                     break
             self.zhuibu(ws)
