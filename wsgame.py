@@ -185,7 +185,7 @@ class wsgame:
             ws.send("task sm "+self.smid)
 
     def baozi(self,ws):
-        self.go('扬州城-醉仙楼')
+        self.go(ws,'扬州城-醉仙楼')
         time.sleep(1)
         ws.send("list "+self.dxerid)
         time.sleep(1)
