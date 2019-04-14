@@ -3,7 +3,7 @@
 ---
 运行需要安装websocket-client
 
-pip install websocket-client
+pip install websocket-client=0.48
 
 python demo.py 
 
