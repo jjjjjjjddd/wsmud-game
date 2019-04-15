@@ -403,7 +403,7 @@ class wsgame:
     def on_error(self, ws, error):
         self.logCat(error)
 
-    def on_close(self, ws):
+    def on_close(self):
         self.logCat("### closed ###")
 
     def on_open(self, ws):
