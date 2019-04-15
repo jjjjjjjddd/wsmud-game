@@ -26,6 +26,7 @@ class wsgame:
     yjdid = ''
     smid = ''
     rc = False
+    ym = False
     sfname = "苏星河"
     mp = ''
     dxerid = ''
@@ -38,6 +39,7 @@ class wsgame:
     die = False
     myname = ''
     zbid = ''
+    
     addr = {"住房": "jh fam 0 start;go west;go west;go north;go enter",
             "住房-卧室": "jh fam 0 start;go west;go west;go north;go enter;go north",
             "住房-小花园": "jh fam 0 start;go west;go west;go north;go enter;go northeast",
@@ -310,6 +312,15 @@ class wsgame:
         if self.mp == '':
             if e['dialog'] == 'score':
                 self.mp = e['family']
+        if e['dialog'] =='tasks':
+            if e['items'] != None:
+                for item in e['items']:
+                    if item['id']=='yamen':
+                        if '20/20' in item['desc']:
+                            self.ym = True
+                            return
+                
+            
 
     def getsmid(self, ws, e):
         if 'items' in e:
@@ -365,6 +376,7 @@ class wsgame:
         ws.send('pack')
         ws.send("taskover signin")
         ws.send('score')
+        ws.send('tasks')
         time.sleep(1)
         self.logCat("3")
         time.sleep(1)
@@ -419,7 +431,8 @@ class wsgame:
                     self.fuben(ws)
                 if not self.die:
                     break
-            self.zhuibu(ws)
+            if not self.ym:
+                self.zhuibu(ws)
             self.wakuang(ws)
             ws.close()
             self.logCat("thread terminating...")
