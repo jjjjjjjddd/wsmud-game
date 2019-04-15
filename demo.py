@@ -24,11 +24,13 @@ if __name__ == "__main__":
     serverurl = "ws://120.79.75.160:25631/"
     # 参数1:用户名
     # 参数2:密码
-    c = GetLoginCookie('', '')
+    c = GetLoginCookie('a4140', '595902716')
     utoken = c.getCookie()
-    if utoken== '':
+    if utoken== ' ':
         print('账号密码错误')
         exit(0)
+    else:
+        print('Login success')
     # 参数1:服务器url
     # 参数2:用户accesstoken
     wsp = wsgamePlayer(serverurl, utoken)

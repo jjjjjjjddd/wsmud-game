@@ -380,18 +380,18 @@ class wsgame:
         if e['ch'] == 'tm' and e['uid'] == self.palyer:
             self.myname = e['name']
 
-    def on_message(self, ws, message):
+    def on_message(self, message):
         if "{" and "}" in message:
             e = self.convet_json(message)
             self.logCat(e)
             if e['type'] == "dialog":
-                self.lianxi(ws, e)
+                self.lianxi(self.ws, e)
             if e['type'] == "cmds":
-                self.smcmd(ws, e)
+                self.smcmd(self.ws, e)
             if e['type'] == "items":
-                self.getsmid(ws, e)
+                self.getsmid(self.ws, e)
             if e['type'] == "msg":
-                self.getmyname(ws, e)
+                self.getmyname(self.ws, e)
         else:
             self.logCat(message)
             if "你今天已经签到了" in message:
@@ -399,7 +399,7 @@ class wsgame:
             if "休息一下吧" in message:
                 self.smflag = False
             if "灵魂状态" in message:
-                self.relive(ws, message)
+                self.relive(self.ws, message)
 
     def on_error(self, ws, error):
         self.logCat(error)
@@ -428,11 +428,13 @@ class wsgame:
         thread.start_new_thread(run, ())
 
     def start(self):
-        websocket.enableTrace(False)
-        ws = websocket.WebSocketApp(self.serverip,
+        websocket.enableTrace(True)
+        self.ws = websocket.WebSocketApp(self.serverip,
                                     on_message=self.on_message,
                                     on_error=self.on_error,
                                     on_close=self.on_close)
-        ws.on_open = self.on_open
-        ws.run_forever()
+        self.ws.on_open = self.on_open(self.ws)
+        self.ws.run_forever()
+
+
 
