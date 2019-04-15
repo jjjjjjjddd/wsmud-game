@@ -2,7 +2,6 @@
 # tool VSCODE
 # time 2018-8-2 10:12:27
 import threading
-from wsgameLogin import GetLoginCookie
 import websocket
 
 from wsgamePlayer import wsgamePlayer
