@@ -3,25 +3,20 @@
 ---
 运行需要安装websocket-client
 
-pip install websocket-client
 
-python demo.py 
+
+
 
 配置说明:
 
-主要修改 demo.py中的main 部分 创建thread的参数
-
-参数1 为账户,参数2为密码
-
-c = GetLoginCookie('','')
 
 
+```
+pip install websocket-client
 
-wsg2= MyThread(serverurl,utoken,pid,5)
+python demo.py [username] [password] [zone]
 
-参数4 为 师门编号
-
-   1武当 2少林 3华山 4峨眉 5逍遥 6丐帮
+```
 
 脚本说明:
 
