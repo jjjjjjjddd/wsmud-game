@@ -14,15 +14,9 @@ import time
 import json
 import re
 
-
-def sendcmd(ws, cmd):
-    cmd = cmd.split(";")
-    for i in cmd:
-        ws.send(i)
-
-
 class wsgame:
     smflag = True
+    running = True
     yjdid = ''
     smid = ''
     rc = False
@@ -42,6 +36,7 @@ class wsgame:
     smgood =''
     smbreak = False
     sdf = 0
+    tiegao = ''
     addr = {"住房": "jh fam 0 start;go west;go west;go north;go enter",
             "住房-卧室": "jh fam 0 start;go west;go west;go north;go enter;go north",
             "住房-小花园": "jh fam 0 start;go west;go west;go north;go enter;go northeast",
@@ -387,11 +382,36 @@ class wsgame:
             "place": "扬州城-药铺"
         },
     }
-    npcs={ "店小二": 0, "铁匠铺老板 铁匠": 0, "药铺老板 平一指": 0, "杂货铺老板 杨永福": 0 }
-    def __init__(self, serverip, acctoken, palyer=""):
+    yb = 0
+    bagsize = 0
+    bagitemsize = 0
+    bagshitou = ''
+    autouse = None
+    npcs={ "店小二": 0, "铁匠铺老板 铁匠": 0, "药铺老板 平一指": 0, "杂货铺老板 杨永福": 0 ,"扬州知府 程药发":0}
+    npcsj = ''
+    name =''
+    def __init__(self, serverip, acctoken, palyer="",name=''):
         self.serverip = serverip
         self.acctoken = acctoken
         self.palyer = palyer
+        if name =='':
+            self.name = time.strftime('%H%M%S',time.localtime(time.time()))
+        else:
+            self.name = name
+    def getrun(self):
+        return self.running
+
+    def sendcmd(self, cmd):
+        cmd = cmd.split(";")
+        for i in cmd:
+            if '$' in i:
+                i.replace('$', '')
+                parg = i.split(" ")[1]
+                if 'wait' in i:
+                    time.sleep(int(parg) / 1000)
+            else:
+                #print('send:'+i)
+                self.ws.send(i)
 
     def convet_json(self, json_str):
         json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s, n: n))())
@@ -400,20 +420,20 @@ class wsgame:
     def logCat(self, msg):
         print("{0}: {1}: {2}".format(time.strftime('%H:%M:%S',time.localtime(time.time())), self.myname, msg))
 
-    def go(self, ws, addr):
+    def go(self, addr):
         if self.addr[addr] is not None:
-            sendcmd(ws, self.addr[addr])
+            self.sendcmd( self.addr[addr])
 
-    def sm(self, ws):
+    def sm(self):
         while self.mp == '':
             time.sleep(1)
-        self.go(ws, self.sm_array[self.mp]['place'])
+        self.go( self.sm_array[self.mp]['place'])
         self.sfname = self.sm_array[self.mp]['npc']
         time.sleep(1)
         self.logCat(self.smflag)
         while self.smflag:
             time.sleep(1)
-            ws.send("task sm " + self.smid)
+            self.sendcmd("task sm " + self.smid)
             while self.smgood == '' and  (not self.smbreak):
                 time.sleep(1)
             if self.smbreak:
@@ -421,41 +441,41 @@ class wsgame:
                 continue;
             self.logCat("需要:"+self.smgood)
             if self.smgood in self.goods.keys():
-                self.go(ws,self.goods[self.smgood]['place'])
+                self.go(self.goods[self.smgood]['place'])
                 time.sleep(1)
-                ws.send('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
+                self.sendcmd('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
                 self.logCat('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
                 time.sleep(1)
-                ws.send('buy 1 {0} from {1}'.format(self.goods[self.smgood]['id'],self.npcs[self.goods[self.smgood]['sales']]))
+                self.sendcmd('buy 1 {0} from {1}'.format(self.goods[self.smgood]['id'],self.npcs[self.goods[self.smgood]['sales']]))
                 time.sleep(1)
-                self.go(ws, self.sm_array[self.mp]['place'])
-                ws.send("task sm " + self.smid)
+                self.go( self.sm_array[self.mp]['place'])
+                self.sendcmd("task sm " + self.smid)
                 time.sleep(2)
             else:
-                ws.send("task sm " + self.smid+" giveup")
+                self.sendcmd("task sm " + self.smid+" giveup")
                 self.logCat("无法购买:"+self.smgood)
                 self.smgood=''
 
-    def baozi(self, ws):
-        self.go(ws, '扬州城-醉仙楼')
+    def baozi(self):
+        self.go( '扬州城-醉仙楼')
         time.sleep(1)
-        self.go(ws, '扬州城-杂货铺')
+        self.sendcmd('sell all')
+        self.go( '扬州城-杂货铺')
         time.sleep(1)
-        self.go(ws, '扬州城-打铁铺')
+        self.go( '扬州城-打铁铺')
         time.sleep(1)
-        self.go(ws,'扬州城-药铺')
+        self.go('扬州城-药铺')
         time.sleep(1)
-        ws.send("sell all")
 
-    def richang(self, ws):
+    def richang(self):
         if self.rc:
             return
         time.sleep(1)
-        sendcmd(ws,"jh fb 0 start1;cr yz/lw/shangu;cr over")
-        ws.send("taskover signin")
+        self.sendcmd("jh fb 0 start1;cr yz/lw/shangu;cr over")
+        self.sendcmd("taskover signin")
 
     def fuben(self, ws):
-        ws.send('pack')
+        self.sendcmd('pack')
         time.sleep(5)
         for i in range(10):
             time.sleep(1)
@@ -464,34 +484,46 @@ class wsgame:
             time.sleep(1)
             if self.rc:
                 return
-            ws.send("use " + self.yjdid)
+            self.sendcmd("use " + self.yjdid)
         for i in range(10):
             time.sleep(1)
             self.richang(ws)
 
-    def zhuibu(self, ws):
-        self.go(ws, '扬州城-衙门正厅')
-        while self.zbid == "":
+    def zhuibu(self):
+        self.go( '扬州城-衙门正厅')
+        while self.npcs['扬州知府 程药发']== 0:
             time.sleep(1)
-        ws.send('ask1 ' + self.zbid)
+        self.sendcmd('ask1 ' + self.npcs['扬州知府 程药发'])
         time.sleep(1)
-        ws.send('ask2 ' + self.zbid)
+        self.sendcmd('ask2 ' + self.npcs['扬州知府 程药发'])
         time.sleep(1)
-        ws.send('pack')
+        self.sendcmd('pack')
         time.sleep(2)
         if self.sdf < 20:
-            print('购入需要的扫荡符{0}'.format(20 - self.sdf))
-            ws.send('shop 0 {0}'.format(20 - self.sdf))
-        ws.send('ask3 ' + self.zbid)
+            self.logCat('购入需要的扫荡符{0}'.format(20 - self.sdf))
+            self.sendcmd('shop 0 {0}'.format(20 - self.sdf))
+        self.sendcmd('ask3 ' + self.npcs['扬州知府 程药发'])
 
-    def wakuang(self, ws):
-        self.go(ws, "扬州城-矿山")
+    def wakuang(self):
+        self.sendcmd('pack')
         time.sleep(1)
-        ws.send("wa")
+        self.go( "扬州城-矿山")
+        time.sleep(1)
+        if self.tiegao == '':
+            self.go( "扬州城-打铁铺")
+            time.sleep(1)
+            self.sendcmd("list {0}".format(self.npcs[self.goods['<wht>铁镐</wht>']['sales']]))
+            time.sleep(1)
+            self.sendcmd("buy 1 {0} from {1}".format(self.goods['<wht>铁镐</wht>']['id'],self.npcs[self.goods['<wht>铁镐</wht>']['sales']]))
+            self.wakuang()
+        else:
+            self.sendcmd("eq {0};wa".format(self.tiegao))
 
-    def lianxi(self, ws, e):
+    def lianxi(self, e):
+        if e['dialog'] =='shop':
+            self.yb = e['cash_money']
         if e['dialog'] == 'list':
-            self.getitemsId(ws, e)
+            self.getitemsId( e)
         if e['dialog'] == "skills":
             self.logCat("技能 " + e['id'] + " 提升到 " + str(e['exp']) + "%")
             if 'level' in e:
@@ -499,14 +531,30 @@ class wsgame:
                 self.logCat("升级了" + "技能 " + e['id'] + "到" + str(e['level']) + "级")
         if e['dialog'] == "pack":
             if 'items' in e:
+                self.bagsize = e['max_item_count']
+                self.bagitemsize = len(e['items'])
                 for item in e['items']:
                     #self.logCat(item)
-                    if "养精丹" in item['name']:
+                    if "<hic>养精丹</hic>" in item['name']:
                         self.yjdid = item['id']
-                        self.logCat("养精丹id:" + self.yjdid)
+                        #self.logCat("养精丹id:" + self.yjdid)
                     if "扫荡符" in item['name']:
                         self.sdf = item['count']
-                        self.logCat("扫荡符数量:{0}".format (self.sdf))
+                        #self.logCat("扫荡符数量:{0}".format (self.sdf))
+                    if "铁镐" in item['name']:
+                        self.tiegao = item['id']
+                        #self.logCat("铁镐id:{0}".format (self.tiegao))
+
+
+
+            if 'eqs' in e:
+                for item in e['eqs']:
+                    if 'name'in item.keys() and "铁镐" in item['name']:
+                        self.tiegao = item['id']
+                        #elf.logCat("铁镐id:{0}".format (self.tiegao))
+            if 'name' in e:
+                if "背包扩充石" in e['name']:
+                    self.bagshitou =  e['id']
 
         if self.mp == '':
             if e['dialog'] == 'score':
@@ -519,7 +567,7 @@ class wsgame:
                             self.ym = True
                             return
 
-    def getsmid(self, ws, e):
+    def getsmid(self, e):
         if 'items' in e:
             for item in e["items"]:
                 # self.logCat(item)
@@ -533,32 +581,18 @@ class wsgame:
                 if item["name"] in self.npcs:
                     self.npcs[item["name"]] = item['id']
                     self.logCat(self.npcs)
+                    # self.npcsj = json.dumps(self.npcs)
                     break
-                if self.zbid == '':
-                    if '扬州知府 程药发' in item['name']:
-                        self.zbid = item['id']
-                        self.logCat("程药发id" + self.zbid)
 
-    def getitemsId(self, ws, e):
+
+    def getitemsId(self, e):
         if 'seller' in e:
-            # if e['seller'] == self.npcs['店小二']:
-            #     self.logCat("getbaozi1")
-            #     for sellitem in e['selllist']:
-            #         if sellitem == 0:
-            #             continue
-            #         if self.baoziid == "":
-            #             if "包子" in sellitem['name']:
-            #                 self.baoziid = sellitem['id']
-            #                 self.logCat("包子id:" + self.baoziid)
-            #                 break
-
-
             for item in e['selllist']:
                 if item['name'] in self.goods.keys():
                     self.goods[item['name']]['id']=item['id']
             #self.logCat(self.goods)
 
-    def smcmd(self, ws, e):
+    def smcmd(self, e):
         if not self.smflag:
             return
         self.logCat(e['items'][0]['cmd'])
@@ -566,51 +600,77 @@ class wsgame:
             if item['name'] is None:
                 break
             if self.smgood in item['name']:
-                ws.send(item['cmd'])
+                self.sendcmd(item['cmd'])
                 self.logCat('交任务物品')
                 self.smgood = ''
                 self.smbreak =True
                 return
 
-    def relive(self, ws, e):
-        ws.send('relive')
+    def relive(self, e):
+        self.sendcmd('relive')
         self.die = True
 
-    def login(self, ws):
-        ws.send(self.acctoken)
-        ws.send("login " + self.palyer)
+    def bagresize(self):
+        if self.yb > 80 and self.bagsize<100:
+            self.logCat("元宝充足,购买背包扩容")
+            self.sendcmd('shop 2 1')
+            time.sleep(1)
+            self.sendcmd('use {0}'.format(self.bagshitou))
+        else:
+            self.logCat("无法购买背包扩容")
+
+    def afterwards(self):
+        self.logCat('使用可用物品开始')
+        if self.palyer == '':
+            self.logCat('使用可用物品结束')
+            return
+        self.autouse = self.au.getUseList(self.palyer)
+        print("{0}:{1}".format(self.palyer, self.autouse))
+        cmds = ''
+        for item in self.autouse:
+            for i in range(self.autouse[item]['count']):
+                cmds+='use {0};$wait 500;'.format(self.autouse[item]['id'])
+                self.logCat('使用{0}'.format(item))
+        self.sendcmd(cmds)
+        self.logCat('使用可用物品结束')
+
+    def login(self):
+        self.sendcmd(self.acctoken)
+        self.sendcmd("login " + self.palyer)
         time.sleep(1)
-        ws.send('tm knva')
-        ws.send('setting ban_pk 1')
-        ws.send("stopstate")
+        self.sendcmd('setting ban_pk 1')
+        self.sendcmd('setting off_move 1')
+        self.sendcmd("stopstate;tm knva")
         time.sleep(1)
         self.logCat("3")
-        ws.send('pack')
-        ws.send("taskover signin")
+        self.sendcmd('pack;taskover signin;shop')
         time.sleep(1)
         self.logCat("2")
-        ws.send('score')
-        ws.send('tasks')
+        self.sendcmd('score;$wait 500;tasks')
         time.sleep(1)
         self.logCat("1")
-        time.sleep(1)
+        print('{0}:{1}'.format(self.name,self.npcsj))
+        if self.myname == '':
+            self.logCat("登录失败,重新登录")
+            self.login()
 
-    def getmyname(self, ws, e):
+    def getmyname(self, e):
         if e['ch'] == 'tm' and e['uid'] == self.palyer:
             self.myname = e['name']
+            #print(self.myname)
 
     def on_message(self, message):
         if "{" and "}" in message:
             e = self.convet_json(message)
             #self.logCat(e)
             if e['type'] == "dialog":
-                self.lianxi(self.ws, e)
+                self.lianxi( e)
             if e['type'] == "cmds":
-                self.smcmd(self.ws, e)
+                self.smcmd( e)
             if e['type'] == "items":
-                self.getsmid(self.ws, e)
+                self.getsmid( e)
             if e['type'] == "msg":
-                self.getmyname(self.ws, e)
+                self.getmyname( e)
         else:
             if "你去帮我找一件" in message or "我要的是" in message or "你去帮我找一下吧" in message or '你去帮我找些' in message:
                 res = re.findall(r'>(.*?)<', message)
@@ -623,39 +683,47 @@ class wsgame:
                 self.smflag = False
                 self.smbreak=True
             if "灵魂状态" in message:
-                self.relive(self.ws, message)
+                self.relive( message)
 
-    def on_error(self, ws, error):
+    def on_error(self, error):
         self.logCat(error)
 
     def on_close(self):
         self.logCat("### 断开连接 ###")
 
-    def on_open(self, ws):
+    def on_open(self):
         def run(*args):
             time.sleep(1)
-            self.login(ws)
+            self.login()
             self.logCat("日常完成:{0}".format(self.rc))
+            self.baozi()
             while True:
                 if not self.rc:
-                    self.baozi(ws)
-                    self.sm(ws)
-                    self.fuben(ws)
+                    if (self.bagitemsize - self.bagsize) < 5:
+                        self.bagresize()
+                    else:
+                        self.logCat("背包空间足够,无需扩容")
+
+                    self.sm()
+                    self.fuben()
                 if not self.die:
                     break
             if not self.ym:
-                self.zhuibu(ws)
-            self.wakuang(ws)
-            ws.close()
+                self.zhuibu()
+            self.ws.send('pack')
+            self.wakuang()
+            self.ws.close()
             self.logCat("线程结束")
-
+            print(self.npcsj)
+            self.running =False
         thread.start_new_thread(run, ())
 
     def start(self):
+
         websocket.enableTrace(False)
         self.ws = websocket.WebSocketApp(self.serverip,
                                          on_message=self.on_message,
                                          on_error=self.on_error,
                                          on_close=self.on_close)
-        self.ws.on_open = self.on_open(self.ws)
+        self.ws.on_open = self.on_open
         self.ws.run_forever()

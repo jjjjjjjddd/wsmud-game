@@ -211,26 +211,26 @@ class wsgame:
                 if 'items' in e:
                     for item in e['items']:
                         if self.yjdid=='':
-                            if "养精丹" in item['name']:
+                            if 'name'in e and "养精丹" in item['name']:
                                 self.yjdid = item['id']
                                 print("养精丹id:"+self.yjdid)
                                 break
                         if self.tiegaoid=='':
-                            if self.tiegaoname in item['name']:
+                            if 'name'in e and self.tiegaoname in item['name']:
                                 self.tiegaoid = item['id']
                                 print("铁镐id:"+self.tiegaoid)
                                 break
                         if self.quanjiaoid=='':
-                            if self.quanjiaoname in item['name']:
+                            if 'name'in e and self.quanjiaoname in item['name']:
                                 self.quanjiaoid = item['id']
                                 print("拳脚id:"+self.quanjiaoid)
                                 break
                 if self.neigongid=='':
-                    if self.neigongname in e['name']:
+                    if 'name'in e and self.neigongname in e['name']:
                                 self.neigongid = e['id']
                                 print("内功id:"+self.neigongid)
                 if self.mtiegaoid=='':
-                    if self.tiegaoname in item['name']:
+                    if 'name'in e and self.tiegaoname in item['name']:
                         self.mtiegaoid = item['id']
                         print("铁镐id:"+self.mtiegaoid)
                         
@@ -422,7 +422,8 @@ class GetLoginCookie:
 if __name__ == "__main__":
 
     c = GetLoginCookie('','')
-    for i in range(30):
-        wsg= MyThread("ws://120.78.75.229:25631",c.getCookie())
+    for i in range(5):
+        wsg= MyThread("ws://120.79.75.160:25631/",c.getCookie())
         wsg.start()
+        time.sleep(5)
     time.sleep(100000)
