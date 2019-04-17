@@ -41,6 +41,7 @@ class wsgame:
     zbid = ''
     smgood =''
     smbreak = False
+    sdf = 0
     addr = {"住房": "jh fam 0 start;go west;go west;go north;go enter",
             "住房-卧室": "jh fam 0 start;go west;go west;go north;go enter;go north",
             "住房-小花园": "jh fam 0 start;go west;go west;go north;go enter;go northeast",
@@ -397,7 +398,7 @@ class wsgame:
         return json_obj
 
     def logCat(self, msg):
-        print("{0}: {1}: {2}".format(time.time(), self.myname, msg))
+        print("{0}: {1}: {2}".format(time.strftime('%H:%M:%S',time.localtime(time.time())), self.myname, msg))
 
     def go(self, ws, addr):
         if self.addr[addr] is not None:
@@ -476,7 +477,11 @@ class wsgame:
         time.sleep(1)
         ws.send('ask2 ' + self.zbid)
         time.sleep(1)
-        ws.send('shop 0 20')
+        ws.send('pack')
+        time.sleep(2)
+        if self.sdf < 20:
+            print('购入需要的扫荡符{0}'.format(20 - self.sdf))
+            ws.send('shop 0 {0}'.format(20 - self.sdf))
         ws.send('ask3 ' + self.zbid)
 
     def wakuang(self, ws):
@@ -492,15 +497,17 @@ class wsgame:
             if 'level' in e:
                 # self.logCat(e)
                 self.logCat("升级了" + "技能 " + e['id'] + "到" + str(e['level']) + "级")
-        if self.yjdid == "":
-            if e['dialog'] == "pack":
-                if 'items' in e:
-                    for item in e['items']:
-                        # self.logCat(item)
-                        if "养精丹" in item['name']:
-                            self.yjdid = item['id']
-                            self.logCat("养精丹id:" + self.yjdid)
-                            break
+        if e['dialog'] == "pack":
+            if 'items' in e:
+                for item in e['items']:
+                    #self.logCat(item)
+                    if "养精丹" in item['name']:
+                        self.yjdid = item['id']
+                        self.logCat("养精丹id:" + self.yjdid)
+                    if "扫荡符" in item['name']:
+                        self.sdf = item['count']
+                        self.logCat("扫荡符数量:{0}".format (self.sdf))
+
         if self.mp == '':
             if e['dialog'] == 'score':
                 self.mp = e['family']
@@ -549,7 +556,7 @@ class wsgame:
             for item in e['selllist']:
                 if item['name'] in self.goods.keys():
                     self.goods[item['name']]['id']=item['id']
-            self.logCat(self.goods)
+            #self.logCat(self.goods)
 
     def smcmd(self, ws, e):
         if not self.smflag:
@@ -573,20 +580,19 @@ class wsgame:
         ws.send(self.acctoken)
         ws.send("login " + self.palyer)
         time.sleep(1)
+        ws.send('tm knva')
         ws.send('setting ban_pk 1')
         ws.send("stopstate")
+        time.sleep(1)
+        self.logCat("3")
         ws.send('pack')
         ws.send("taskover signin")
+        time.sleep(1)
+        self.logCat("2")
         ws.send('score')
         ws.send('tasks')
         time.sleep(1)
-        self.logCat("3")
-        time.sleep(1)
-        self.logCat("2")
-        time.sleep(1)
         self.logCat("1")
-        time.sleep(1)
-        ws.send('tm aa')
         time.sleep(1)
 
     def getmyname(self, ws, e):
@@ -623,13 +629,13 @@ class wsgame:
         self.logCat(error)
 
     def on_close(self):
-        self.logCat("### closed ###")
+        self.logCat("### 断开连接 ###")
 
     def on_open(self, ws):
         def run(*args):
             time.sleep(1)
             self.login(ws)
-            self.logCat(self.rc)
+            self.logCat("日常完成:{0}".format(self.rc))
             while True:
                 if not self.rc:
                     self.baozi(ws)
@@ -641,7 +647,7 @@ class wsgame:
                 self.zhuibu(ws)
             self.wakuang(ws)
             ws.close()
-            self.logCat("thread terminating...")
+            self.logCat("线程结束")
 
         thread.start_new_thread(run, ())
 
