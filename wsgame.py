@@ -512,7 +512,7 @@ class wsgame:
             if 'items' in e:
                 for item in e['items']:
                     #self.logCat(item)
-                    if "养精丹" in item['name']:
+                    if "<hic>养精丹</hic>" in item['name']:
                         self.yjdid = item['id']
                         #self.logCat("养精丹id:" + self.yjdid)
                     if "扫荡符" in item['name']:
