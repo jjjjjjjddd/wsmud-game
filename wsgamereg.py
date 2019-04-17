@@ -211,26 +211,26 @@ class wsgame:
                 if 'items' in e:
                     for item in e['items']:
                         if self.yjdid=='':
-                            if 'name'in e and "养精丹" in item['name']:
+                            if  "养精丹" in item['name']:
                                 self.yjdid = item['id']
                                 print("养精丹id:"+self.yjdid)
                                 break
                         if self.tiegaoid=='':
-                            if 'name'in e and self.tiegaoname in item['name']:
+                            if  self.tiegaoname in item['name']:
                                 self.tiegaoid = item['id']
                                 print("铁镐id:"+self.tiegaoid)
                                 break
                         if self.quanjiaoid=='':
-                            if 'name'in e and self.quanjiaoname in item['name']:
+                            if  self.quanjiaoname in item['name']:
                                 self.quanjiaoid = item['id']
                                 print("拳脚id:"+self.quanjiaoid)
                                 break
                 if self.neigongid=='':
-                    if 'name'in e and self.neigongname in e['name']:
+                    if  self.neigongname in e['name']:
                                 self.neigongid = e['id']
                                 print("内功id:"+self.neigongid)
                 if self.mtiegaoid=='':
-                    if 'name'in e and self.tiegaoname in item['name']:
+                    if  self.tiegaoname in item['name']:
                         self.mtiegaoid = item['id']
                         print("铁镐id:"+self.mtiegaoid)
                         
@@ -421,7 +421,7 @@ class GetLoginCookie:
                 self.u=item.value
 if __name__ == "__main__":
 
-    c = GetLoginCookie('','')
+    c = GetLoginCookie('a0093','595902716')
     for i in range(5):
         wsg= MyThread("ws://120.79.75.160:25631/",c.getCookie())
         wsg.start()
