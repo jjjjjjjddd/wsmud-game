@@ -5,7 +5,9 @@ from wsgame import wsgame
 from wsgamePlayer import wsgamePlayer
 import threading
 import time
-from wsgameLogin import GetLoginCookie
+from wsgameLogin import  GetLoginInfo
+import sys
+
 
 class MyThread(threading.Thread):
     def __init__(self, serverip, acctoken, player):
@@ -20,15 +22,27 @@ class MyThread(threading.Thread):
 
 
 if __name__ == "__main__":
+    # 支持命令行 参数1 用户名 参数2 密码 参数3 区
     # 填服务器ip 默认1区
-    serverurl = "ws://120.79.75.160:25631/"
+    zone = '1'
+    username = ''
+    password = ''
+    if len(sys.argv) ==4:
+        username = sys.argv[1]
+        password = sys.argv[2]
+        zone =  sys.argv[3]
     # 参数1:用户名
     # 参数2:密码
-    c = GetLoginCookie('', '')
+    c = GetLoginInfo(username, password)
+    c.getServer()
     utoken = c.getCookie()
-    if utoken== '':
+    serverurl = c.getServerUrl(zone)
+    print(serverurl)
+    if utoken== ' ':
         print('账号密码错误')
         exit(0)
+    else:
+        print('Login success')
     # 参数1:服务器url
     # 参数2:用户accesstoken
     wsp = wsgamePlayer(serverurl, utoken)

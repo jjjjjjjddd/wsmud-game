@@ -2,7 +2,6 @@
 # tool VSCODE
 # time 2018-8-2 10:12:27
 import threading
-from wsgameLogin import GetLoginCookie
 import websocket
 
 from wsgamePlayer import wsgamePlayer
@@ -27,6 +26,7 @@ class wsgame:
     yjdid = ''
     smid = ''
     rc = False
+    ym = False
     sfname = "苏星河"
     mp = ''
     dxerid = ''
@@ -39,6 +39,9 @@ class wsgame:
     die = False
     myname = ''
     zbid = ''
+    smgood =''
+    smbreak = False
+    sdf = 0
     addr = {"住房": "jh fam 0 start;go west;go west;go north;go enter",
             "住房-卧室": "jh fam 0 start;go west;go west;go north;go enter;go north",
             "住房-小花园": "jh fam 0 start;go west;go west;go north;go enter;go northeast",
@@ -184,7 +187,7 @@ class wsgame:
             'sxplace': "-jh fam 5 start;go west",
             'sx': "首席弟子"
         },
-        '丐帮派': {
+        '丐帮': {
             'place': "丐帮-树洞下",
             'npc': "丐帮七袋弟子 左全",
             'sxplace': "丐帮-破庙密室",
@@ -196,7 +199,7 @@ class wsgame:
             'sxplace': "峨眉派-广场",
             'sx': "大师姐"
         },
-        '武馆': {
+        '无门无派': {
             'place': "扬州城-扬州武馆",
             'npc': "武馆教习",
             'sxplace': "扬州城-扬州武馆"
@@ -208,7 +211,183 @@ class wsgame:
             'sx': "金牌杀手"
         }
     }
-
+    goods = {
+        "<wht>米饭</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>包子</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>鸡腿</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>面条</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>扬州炒饭</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>米酒</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>花雕酒</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>女儿红</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<hig>醉仙酿</hig>": {
+            "id": None,
+            "type": "hig",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<hiy>神仙醉</hiy>": {
+            "id": None,
+            "type": "hiy",
+            "sales": "店小二",
+            "place": "扬州城-醉仙楼"
+        },
+        "<wht>布衣</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>钢刀</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>木棍</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>英雄巾</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>布鞋</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>铁戒指</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>簪子</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>长鞭</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>钓鱼竿</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>鱼饵</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "杂货铺老板 杨永福",
+            "place": "扬州城-杂货铺"
+        },
+        "<wht>铁剑</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<wht>钢刀</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<wht>铁棍</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<wht>铁杖</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<wht>铁镐</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<wht>飞镖</wht>": {
+            "id": None,
+            "type": "wht",
+            "sales": "铁匠铺老板 铁匠",
+            "place": "扬州城-打铁铺"
+        },
+        "<hig>金创药</hig>": {
+            "id": None,
+            "type": "hig",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+        "<hig>引气丹</hig>": {
+            "id": None,
+            "type": "hig",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+        "<hig>养精丹</hig>": {
+            "id": None,
+            "type": "hig",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+    }
+    npcs={ "店小二": 0, "铁匠铺老板 铁匠": 0, "药铺老板 平一指": 0, "杂货铺老板 杨永福": 0 }
     def __init__(self, serverip, acctoken, palyer=""):
         self.serverip = serverip
         self.acctoken = acctoken
@@ -219,7 +398,7 @@ class wsgame:
         return json_obj
 
     def logCat(self, msg):
-        print("{0}: {1}: {2}".format(time.time(), self.myname, msg))
+        print("{0}: {1}: {2}".format(time.strftime('%H:%M:%S',time.localtime(time.time())), self.myname, msg))
 
     def go(self, ws, addr):
         if self.addr[addr] is not None:
@@ -235,29 +414,44 @@ class wsgame:
         while self.smflag:
             time.sleep(1)
             ws.send("task sm " + self.smid)
+            while self.smgood == '' and  (not self.smbreak):
+                time.sleep(1)
+            if self.smbreak:
+                self.smbreak =False
+                continue;
+            self.logCat("需要:"+self.smgood)
+            if self.smgood in self.goods.keys():
+                self.go(ws,self.goods[self.smgood]['place'])
+                time.sleep(1)
+                ws.send('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
+                self.logCat('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
+                time.sleep(1)
+                ws.send('buy 1 {0} from {1}'.format(self.goods[self.smgood]['id'],self.npcs[self.goods[self.smgood]['sales']]))
+                time.sleep(1)
+                self.go(ws, self.sm_array[self.mp]['place'])
+                ws.send("task sm " + self.smid)
+                time.sleep(2)
+            else:
+                ws.send("task sm " + self.smid+" giveup")
+                self.logCat("无法购买:"+self.smgood)
+                self.smgood=''
 
     def baozi(self, ws):
         self.go(ws, '扬州城-醉仙楼')
         time.sleep(1)
-        ws.send("list " + self.dxerid)
+        self.go(ws, '扬州城-杂货铺')
+        time.sleep(1)
+        self.go(ws, '扬州城-打铁铺')
+        time.sleep(1)
+        self.go(ws,'扬州城-药铺')
         time.sleep(1)
         ws.send("sell all")
-        time.sleep(0.5)
-        ws.send("buy 20 " + self.baoziid + " from " + self.dxerid)
-        time.sleep(1)
 
     def richang(self, ws):
         if self.rc:
             return
         time.sleep(1)
-        ws.send("jh fb 0 start1")
-        time.sleep(1)
-        ws.send("cr cd/wen/damen")
-        time.sleep(1)
-        ws.send("cr")
-        time.sleep(1)
-        ws.send("cr over")
-        time.sleep(1)
+        sendcmd(ws,"jh fb 0 start1;cr yz/lw/shangu;cr over")
         ws.send("taskover signin")
 
     def fuben(self, ws):
@@ -283,7 +477,11 @@ class wsgame:
         time.sleep(1)
         ws.send('ask2 ' + self.zbid)
         time.sleep(1)
-        ws.send('shop 0 20')
+        ws.send('pack')
+        time.sleep(2)
+        if self.sdf < 20:
+            print('购入需要的扫荡符{0}'.format(20 - self.sdf))
+            ws.send('shop 0 {0}'.format(20 - self.sdf))
         ws.send('ask3 ' + self.zbid)
 
     def wakuang(self, ws):
@@ -299,18 +497,27 @@ class wsgame:
             if 'level' in e:
                 # self.logCat(e)
                 self.logCat("升级了" + "技能 " + e['id'] + "到" + str(e['level']) + "级")
-        if self.yjdid == "":
-            if e['dialog'] == "pack":
-                if 'items' in e:
-                    for item in e['items']:
-                        # self.logCat(item)
-                        if "养精丹" in item['name']:
-                            self.yjdid = item['id']
-                            self.logCat("养精丹id:" + self.yjdid)
-                            break
+        if e['dialog'] == "pack":
+            if 'items' in e:
+                for item in e['items']:
+                    #self.logCat(item)
+                    if "养精丹" in item['name']:
+                        self.yjdid = item['id']
+                        self.logCat("养精丹id:" + self.yjdid)
+                    if "扫荡符" in item['name']:
+                        self.sdf = item['count']
+                        self.logCat("扫荡符数量:{0}".format (self.sdf))
+
         if self.mp == '':
             if e['dialog'] == 'score':
                 self.mp = e['family']
+        if e['dialog'] == 'tasks':
+            if e['items'] != None:
+                for item in e['items']:
+                    if item['id'] == 'yamen':
+                        if '20/20' in item['desc']:
+                            self.ym = True
+                            return
 
     def getsmid(self, ws, e):
         if 'items' in e:
@@ -323,35 +530,47 @@ class wsgame:
                         self.smid = item['id']
                         self.logCat("师门id:" + self.smid)
                         break
-                if self.dxerid == '':
-                    if self.dxename in item["name"]:
-                        self.dxerid = item['id']
-                        self.logCat("店小二id:" + self.dxerid)
-                        break
+                if item["name"] in self.npcs:
+                    self.npcs[item["name"]] = item['id']
+                    self.logCat(self.npcs)
+                    break
                 if self.zbid == '':
                     if '扬州知府 程药发' in item['name']:
                         self.zbid = item['id']
                         self.logCat("程药发id" + self.zbid)
 
     def getitemsId(self, ws, e):
-        if self.dxerid == '':
-            return
         if 'seller' in e:
-            self.logCat("getbaozi")
-            if e['seller'] == self.dxerid:
-                self.logCat("getbaozi1")
-                for sellitem in e['selllist']:
-                    if sellitem == 0:
-                        continue
-                    if self.baoziid == "":
-                        if "包子" in sellitem['name']:
-                            self.baoziid = sellitem['id']
-                            self.logCat("包子id:" + self.baoziid)
-                            break
+            # if e['seller'] == self.npcs['店小二']:
+            #     self.logCat("getbaozi1")
+            #     for sellitem in e['selllist']:
+            #         if sellitem == 0:
+            #             continue
+            #         if self.baoziid == "":
+            #             if "包子" in sellitem['name']:
+            #                 self.baoziid = sellitem['id']
+            #                 self.logCat("包子id:" + self.baoziid)
+            #                 break
+
+
+            for item in e['selllist']:
+                if item['name'] in self.goods.keys():
+                    self.goods[item['name']]['id']=item['id']
+            #self.logCat(self.goods)
 
     def smcmd(self, ws, e):
+        if not self.smflag:
+            return
         self.logCat(e['items'][0]['cmd'])
-        ws.send(e['items'][0]['cmd'])
+        for item in e['items']:
+            if item['name'] is None:
+                break
+            if self.smgood in item['name']:
+                ws.send(item['cmd'])
+                self.logCat('交任务物品')
+                self.smgood = ''
+                self.smbreak =True
+                return
 
     def relive(self, ws, e):
         ws.send('relive')
@@ -361,78 +580,82 @@ class wsgame:
         ws.send(self.acctoken)
         ws.send("login " + self.palyer)
         time.sleep(1)
+        ws.send('tm knva')
         ws.send('setting ban_pk 1')
         ws.send("stopstate")
-        ws.send('pack')
-        ws.send("taskover signin")
-        ws.send('score')
         time.sleep(1)
         self.logCat("3")
+        ws.send('pack')
+        ws.send("taskover signin")
         time.sleep(1)
         self.logCat("2")
+        ws.send('score')
+        ws.send('tasks')
         time.sleep(1)
         self.logCat("1")
-        time.sleep(1)
-        ws.send('tm aa')
         time.sleep(1)
 
     def getmyname(self, ws, e):
         if e['ch'] == 'tm' and e['uid'] == self.palyer:
             self.myname = e['name']
 
-    def on_message(self, ws, message):
+    def on_message(self, message):
         if "{" and "}" in message:
             e = self.convet_json(message)
-            self.logCat(e)
+            #self.logCat(e)
             if e['type'] == "dialog":
-                self.lianxi(ws, e)
+                self.lianxi(self.ws, e)
             if e['type'] == "cmds":
-                self.smcmd(ws, e)
+                self.smcmd(self.ws, e)
             if e['type'] == "items":
-                self.getsmid(ws, e)
+                self.getsmid(self.ws, e)
             if e['type'] == "msg":
-                self.getmyname(ws, e)
+                self.getmyname(self.ws, e)
         else:
+            if "你去帮我找一件" in message or "我要的是" in message or "你去帮我找一下吧" in message or '你去帮我找些' in message:
+                res = re.findall(r'>(.*?)<', message)
+                ptag = re.findall(r'<(.*?)>', message)
+                self.smgood = "<{0}>{1}<{2}>".format(ptag[0],res[0],ptag[1])
             self.logCat(message)
             if "你今天已经签到了" in message:
                 self.rc = True
             if "休息一下吧" in message:
                 self.smflag = False
+                self.smbreak=True
             if "灵魂状态" in message:
-                self.relive(ws, message)
+                self.relive(self.ws, message)
 
     def on_error(self, ws, error):
         self.logCat(error)
 
-    def on_close(self, ws):
-        self.logCat("### closed ###")
+    def on_close(self):
+        self.logCat("### 断开连接 ###")
 
     def on_open(self, ws):
         def run(*args):
             time.sleep(1)
             self.login(ws)
-            self.logCat(self.rc)
+            self.logCat("日常完成:{0}".format(self.rc))
             while True:
                 if not self.rc:
-                    print('rc')
                     self.baozi(ws)
                     self.sm(ws)
                     self.fuben(ws)
                 if not self.die:
                     break
-            self.zhuibu(ws)
+            if not self.ym:
+                self.zhuibu(ws)
             self.wakuang(ws)
             ws.close()
-            self.logCat("thread terminating...")
+            self.logCat("线程结束")
 
         thread.start_new_thread(run, ())
 
     def start(self):
         websocket.enableTrace(False)
-        ws = websocket.WebSocketApp(self.serverip,
-                                    on_message=self.on_message,
-                                    on_error=self.on_error,
-                                    on_close=self.on_close)
-        ws.on_open = self.on_open
-        ws.run_forever()
-
+        self.ws = websocket.WebSocketApp(self.serverip,
+                                         on_message=self.on_message,
+                                         on_error=self.on_error,
+                                         on_close=self.on_close)
+        self.ws.on_open = self.on_open(self.ws)
+        self.ws.run_forever()

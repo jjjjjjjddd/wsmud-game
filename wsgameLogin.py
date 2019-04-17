@@ -4,15 +4,22 @@
 import urllib.request
 import urllib.parse
 from http import cookiejar
-class GetLoginCookie:
+class GetLoginInfo:
     u=''
     p=''
+    server={}
     def __init__(self,username,password):
         self.username = username
         self.password =password
         self.post()
     def getCookie(self):
         return self.u +' '+self.p
+    def getServerUrl(self,num):
+        #print(self.server)
+        return self.server[num]
+    def convet_json(self, json_str):
+        json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s, n: n))())
+        return json_obj
     def post(self):
         cookie = cookiejar.CookieJar()
         post_url='http://game.wsmud.com/UserAPI/Login'
@@ -27,3 +34,14 @@ class GetLoginCookie:
                 self.p=item.value
             if(item.name=='u'):
                 self.u=item.value
+    def getServer(self):
+        url = 'http://game.wsmud.com/Game/GetServer'
+        opener = urllib.request.build_opener()
+        req = urllib.request.Request(url,method='get')
+        res = opener.open(req).read()
+        json = self.convet_json(res)
+        for item in json:
+            tmp = {"{0}".format(item['ID']):"ws://{0}:{1}".format(item['IP'],item['Port'])}
+            merge = dict(self.server)
+            merge.update(tmp)
+            self.server = merge

@@ -9,7 +9,7 @@ except ImportError:
 import time
 import json
 import re
-
+from websocket import create_connection
 class wsgamePlayer:
     userlist = []
     static = True
@@ -21,35 +21,20 @@ class wsgamePlayer:
         json_obj = eval(json_str, type('Dummy', (dict,), dict(__getitem__=lambda s,n:n))())
         return json_obj
 
-    def on_message(self,ws, message):
-        #print(message)
-        pobj = self.convet_json(message)
+
+    def start(self):
+        ws = create_connection(self.serverip)
+        print("Sending Login Token")
+        ws.send(self.acctoken)
+        print("Sent")
+        print("Receiving...")
+        result = ws.recv()
+        pobj = self.convet_json(result)
         if(pobj['type']=='roles'):
             for item in pobj['roles']:
                 self.userlist.append(item['id'])
             self.static=False
-
-    def on_error(self,ws, error):
-        print(error)
-
-    def on_close(self,ws):
-        print("### socket closed ###")
-
-    def on_open(self,ws):
-        def run(*args):
-            ws.send(self.acctoken)
-            time.sleep(1)
-            ws.close()
-            print("获取角色列表成功")
-        thread.start_new_thread(run, ())
-    def start(self):
-        websocket.enableTrace(True)
-        ws = websocket.WebSocketApp(self.serverip,
-                              on_message = self.on_message,
-                              on_error = self.on_error,
-                              on_close = self.on_close)
-        ws.on_open = self.on_open
-        ws.run_forever()
+        ws.close()
     def getList(self):
         return self.userlist
     def getStatic(self):
