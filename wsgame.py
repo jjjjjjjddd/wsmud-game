@@ -186,7 +186,7 @@ class wsgame:
             'sxplace': "-jh fam 5 start;go west",
             'sx': "首席弟子"
         },
-        '丐帮派': {
+        '丐帮': {
             'place': "丐帮-树洞下",
             'npc': "丐帮七袋弟子 左全",
             'sxplace': "丐帮-破庙密室",
@@ -198,7 +198,7 @@ class wsgame:
             'sxplace': "峨眉派-广场",
             'sx': "大师姐"
         },
-        '武馆': {
+        '无门无派': {
             'place': "扬州城-扬州武馆",
             'npc': "武馆教习",
             'sxplace': "扬州城-扬州武馆"
