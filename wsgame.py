@@ -42,6 +42,7 @@ class wsgame:
     smgood =''
     smbreak = False
     sdf = 0
+    tiegao = ''
     addr = {"住房": "jh fam 0 start;go west;go west;go north;go enter",
             "住房-卧室": "jh fam 0 start;go west;go west;go north;go enter;go north",
             "住房-小花园": "jh fam 0 start;go west;go west;go north;go enter;go northeast",
@@ -480,14 +481,24 @@ class wsgame:
         ws.send('pack')
         time.sleep(2)
         if self.sdf < 20:
-            print('购入需要的扫荡符{0}'.format(20 - self.sdf))
+            self.logCat('购入需要的扫荡符{0}'.format(20 - self.sdf))
             ws.send('shop 0 {0}'.format(20 - self.sdf))
         ws.send('ask3 ' + self.zbid)
 
     def wakuang(self, ws):
+        ws.send('pack')
+        time.sleep(1)
         self.go(ws, "扬州城-矿山")
         time.sleep(1)
-        ws.send("wa")
+        if self.tiegao == '':
+            self.go(ws, "扬州城-打铁铺")
+            time.sleep(1)
+            sendcmd(ws,"list {0}".format(self.npcs[self.goods['<wht>铁镐</wht>']['sales']]))
+            time.sleep(1)
+            sendcmd(ws,"buy 1 {0} from {1}".format(self.goods['<wht>铁镐</wht>']['id'],self.npcs[self.goods['<wht>铁镐</wht>']['sales']]))
+            self.wakuang(ws)
+        else:
+            sendcmd(ws,"eq {0};wa".format(self.tiegao))
 
     def lianxi(self, ws, e):
         if e['dialog'] == 'list':
@@ -503,10 +514,13 @@ class wsgame:
                     #self.logCat(item)
                     if "养精丹" in item['name']:
                         self.yjdid = item['id']
-                        self.logCat("养精丹id:" + self.yjdid)
+                        #self.logCat("养精丹id:" + self.yjdid)
                     if "扫荡符" in item['name']:
                         self.sdf = item['count']
-                        self.logCat("扫荡符数量:{0}".format (self.sdf))
+                        #self.logCat("扫荡符数量:{0}".format (self.sdf))
+                    if "铁镐" in item['name']:
+                        self.tiegao = item['id']
+                        #self.logCat("铁镐id:{0}".format (self.tiegao))
 
         if self.mp == '':
             if e['dialog'] == 'score':
@@ -541,18 +555,6 @@ class wsgame:
 
     def getitemsId(self, ws, e):
         if 'seller' in e:
-            # if e['seller'] == self.npcs['店小二']:
-            #     self.logCat("getbaozi1")
-            #     for sellitem in e['selllist']:
-            #         if sellitem == 0:
-            #             continue
-            #         if self.baoziid == "":
-            #             if "包子" in sellitem['name']:
-            #                 self.baoziid = sellitem['id']
-            #                 self.logCat("包子id:" + self.baoziid)
-            #                 break
-
-
             for item in e['selllist']:
                 if item['name'] in self.goods.keys():
                     self.goods[item['name']]['id']=item['id']
@@ -582,6 +584,7 @@ class wsgame:
         time.sleep(1)
         ws.send('tm knva')
         ws.send('setting ban_pk 1')
+        ws.send('setting off_move 1')
         ws.send("stopstate")
         time.sleep(1)
         self.logCat("3")
