@@ -580,7 +580,7 @@ class wsgame:
                         break
                 if item["name"] in self.npcs:
                     self.npcs[item["name"]] = item['id']
-                    self.logCat(self.npcs)
+                    #self.logCat(self.npcs)
                     # self.npcsj = json.dumps(self.npcs)
                     break
 
@@ -670,7 +670,7 @@ class wsgame:
             if e['type'] == "items":
                 self.getsmid( e)
             if e['type'] == "msg":
-                self.getmyname( e)
+                self.getmyname(e)
         else:
             if "你去帮我找一件" in message or "我要的是" in message or "你去帮我找一下吧" in message or '你去帮我找些' in message:
                 res = re.findall(r'>(.*?)<', message)
