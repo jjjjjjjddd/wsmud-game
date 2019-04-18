@@ -474,12 +474,12 @@ class wsgame:
         self.sendcmd("jh fb 0 start1;cr yz/lw/shangu;cr over")
         self.sendcmd("taskover signin")
 
-    def fuben(self, ws):
+    def fuben(self):
         self.sendcmd('pack')
         time.sleep(5)
         for i in range(10):
             time.sleep(1)
-            self.richang(ws)
+            self.richang()
         for i in range(5):
             time.sleep(1)
             if self.rc:
@@ -487,7 +487,7 @@ class wsgame:
             self.sendcmd("use " + self.yjdid)
         for i in range(10):
             time.sleep(1)
-            self.richang(ws)
+            self.richang()
 
     def zhuibu(self):
         self.go( '扬州城-衙门正厅')
