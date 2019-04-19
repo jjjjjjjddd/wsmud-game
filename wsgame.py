@@ -18,10 +18,13 @@ class wsgame:
     smflag = True
     running = True
     yjdid = ''
+    lvyjdid= ''
+    goldlow = False
     smid = ''
     rc = False
     ym = False
     sfname = "苏星河"
+    sxid = ''
     mp = ''
     dxerid = ''
     dxename = "店小二"
@@ -544,8 +547,8 @@ class wsgame:
                     if "铁镐" in item['name']:
                         self.tiegao = item['id']
                         #self.logCat("铁镐id:{0}".format (self.tiegao))
-
-
+                    if "<hig>养精丹</hig>" in item['name']:
+                        self.lvyjdid = item['id']
 
             if 'eqs' in e:
                 for item in e['eqs']:
@@ -566,6 +569,36 @@ class wsgame:
                         if '20/20' in item['desc']:
                             self.ym = True
                             return
+    def qa(self):
+        while self.mp == '':
+            time.sleep(1)
+        if(self.mp=="无门无派"):
+            return
+        sxpath = self.sm_array[self.mp]['sxplace']
+        
+        time.sleep(1)
+        print(sxpath)
+        if sxpath[0]=='-':
+            self.sendcmd( sxpath.replace("-",""))
+        else:
+            self.go(sxpath)
+        while self.sxid =='':
+            time.sleep(1)
+        self.sendcmd("ask2 {0}".format(self.sxid))
+        time.sleep(1)
+        
+    def yj(self):
+        while self.lvyjdid=='':
+            self.go(self.goods["<hig>养精丹</hig>"]['place'])
+            time.sleep(1)
+            self.sendcmd("list {0}".format(self.npcs[self.goods['<hig>养精丹</hig>']['sales']]))
+            self.sendcmd('buy 10 {0} from {1}'.format(self.goods["<hig>养精丹</hig>"]['id'],self.npcs[self.goods["<hig>养精丹</hig>"]['sales']]))
+            self.sendcmd("pack")
+            time.sleep(1)
+            if self.goldlow:
+                return
+        for i in range(10):
+            self.sendcmd('use {0};$wait 500'.format(self.lvyjdid))
 
     def getsmid(self, e):
         if 'items' in e:
@@ -583,6 +616,8 @@ class wsgame:
                     #self.logCat(self.npcs)
                     # self.npcsj = json.dumps(self.npcs)
                     break
+                if self.sm_array[self.mp]['sx'] in item['name']:
+                    self.sxid = item['id']
 
 
     def getitemsId(self, e):
@@ -684,11 +719,14 @@ class wsgame:
                 self.smbreak=True
             if "灵魂状态" in message:
                 self.relive( message)
+            if '你没有那么多的钱' in message:
+                self.goldlow = True
 
     def on_error(self, error):
         self.logCat(error)
 
     def on_close(self):
+        self.running = False
         self.logCat("### 断开连接 ###")
 
     def on_open(self):
@@ -697,14 +735,17 @@ class wsgame:
             self.login()
             self.logCat("日常完成:{0}".format(self.rc))
             self.baozi()
+            self.qa()
+            self.yj()
             while True:
                 if not self.rc:
                     if (self.bagitemsize - self.bagsize) < 5:
                         self.bagresize()
                     else:
                         self.logCat("背包空间足够,无需扩容")
-
                     self.sm()
+                    self.sendcmd("taskover signin")
+                    self.sendcmd("taskover signin")
                     self.fuben()
                 if not self.die:
                     break
@@ -714,8 +755,6 @@ class wsgame:
             self.wakuang()
             self.ws.close()
             self.logCat("线程结束")
-            print(self.npcsj)
-            self.running =False
         thread.start_new_thread(run, ())
 
     def start(self):
