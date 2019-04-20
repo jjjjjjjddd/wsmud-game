@@ -437,27 +437,29 @@ class wsgame:
         while self.smflag:
             time.sleep(1)
             self.sendcmd("task sm " + self.smid)
+            time.sleep(0.5)
+            self.sendcmd("task sm " + self.smid)
             while self.smgood == '' and  (not self.smbreak):
                 time.sleep(1)
             if self.smbreak:
                 self.smbreak =False
                 continue;
-            self.logCat("需要:"+self.smgood)
             if self.smgood in self.goods.keys():
                 self.go(self.goods[self.smgood]['place'])
                 time.sleep(1)
+                self.logCat("需要购买:" + self.smgood)
                 self.sendcmd('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
-                self.logCat('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
                 time.sleep(1)
                 self.sendcmd('buy 1 {0} from {1}'.format(self.goods[self.smgood]['id'],self.npcs[self.goods[self.smgood]['sales']]))
                 time.sleep(1)
                 self.go( self.sm_array[self.mp]['place'])
-                self.sendcmd("task sm " + self.smid)
                 time.sleep(2)
             else:
                 self.sendcmd("task sm " + self.smid+" giveup")
+                self.logCat("task sm " + self.smid+" giveup")
                 self.logCat("无法购买:"+self.smgood)
                 self.smgood=''
+                time.sleep(1)
 
     def baozi(self):
         self.go( '扬州城-醉仙楼')
@@ -630,15 +632,16 @@ class wsgame:
     def smcmd(self, e):
         if not self.smflag:
             return
-        self.logCat(e['items'][0]['cmd'])
         for item in e['items']:
             if item['name'] is None:
                 break
+            self.logCat(item['name'])
             if self.smgood in item['name']:
                 self.sendcmd(item['cmd'])
                 self.logCat('交任务物品')
                 self.smgood = ''
                 self.smbreak =True
+                time.sleep(1)
                 return
 
     def relive(self, e):
@@ -721,6 +724,7 @@ class wsgame:
                 self.relive( message)
             if '你没有那么多的钱' in message:
                 self.goldlow = True
+                self.rc = True
 
     def on_error(self, error):
         self.logCat(error)
