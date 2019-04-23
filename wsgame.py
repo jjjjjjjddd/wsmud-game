@@ -488,7 +488,7 @@ class wsgame:
         self.sendcmd('pack')
         time.sleep(5)
         for i in range(10):
-            time.sleep(0.2)
+            time.sleep(0.5)
             self.richang()
         for i in range(5):
             time.sleep(1)
@@ -496,7 +496,7 @@ class wsgame:
                 return
             self.sendcmd("use " + self.yjdid)
         for i in range(10):
-            time.sleep(0.2)
+            time.sleep(1)
             self.richang()
 
     def zhuibu(self):
