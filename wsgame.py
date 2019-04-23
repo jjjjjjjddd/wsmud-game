@@ -383,7 +383,7 @@ class wsgame:
             "type": "hig",
             "sales": "药铺老板 平一指",
             "place": "扬州城-药铺"
-        },
+        }
     }
     yb = 0
     bagsize = 0
@@ -438,20 +438,25 @@ class wsgame:
             time.sleep(1)
             self.sendcmd("task sm " + self.smid)
             time.sleep(0.5)
-            self.sendcmd("task sm " + self.smid)
             while self.smgood == '' and  (not self.smbreak):
+                self.go(self.sm_array[self.mp]['place'])
                 time.sleep(1)
+                self.sendcmd("task sm " + self.smid)
+                time.sleep(0.5)
             if self.smbreak:
                 self.smbreak =False
                 continue;
             if self.smgood in self.goods.keys():
                 self.go(self.goods[self.smgood]['place'])
                 time.sleep(1)
+                if self.smbreak:
+                    self.smbreak = False
+                    continue;
                 self.logCat("需要购买:" + self.smgood)
                 self.sendcmd('list {0}'.format(self.npcs[self.goods[self.smgood]['sales']]))
-                time.sleep(1)
+                time.sleep(0.2)
                 self.sendcmd('buy 1 {0} from {1}'.format(self.goods[self.smgood]['id'],self.npcs[self.goods[self.smgood]['sales']]))
-                time.sleep(1)
+                time.sleep(0.1)
                 self.go( self.sm_array[self.mp]['place'])
                 time.sleep(2)
             else:
@@ -483,7 +488,7 @@ class wsgame:
         self.sendcmd('pack')
         time.sleep(5)
         for i in range(10):
-            time.sleep(1)
+            time.sleep(0.2)
             self.richang()
         for i in range(5):
             time.sleep(1)
@@ -491,7 +496,7 @@ class wsgame:
                 return
             self.sendcmd("use " + self.yjdid)
         for i in range(10):
-            time.sleep(1)
+            time.sleep(0.2)
             self.richang()
 
     def zhuibu(self):
