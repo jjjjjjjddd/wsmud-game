@@ -695,6 +695,7 @@ class wsgame:
         print('{0}:{1}'.format(self.name,self.npcsj))
         if self.myname == '':
             self.logCat("登录失败,重新登录")
+            time.sleep(5)
             self.login()
 
     def getmyname(self, e):
