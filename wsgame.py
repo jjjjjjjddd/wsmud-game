@@ -517,8 +517,8 @@ class wsgame:
     def wakuang(self):
         self.sendcmd('pack')
         time.sleep(1)
-        self.go( "扬州城-矿山")
-        time.sleep(1)
+        #self.go( "扬州城-矿山")
+        #time.sleep(1)
         if self.tiegao == '':
             self.go( "扬州城-打铁铺")
             time.sleep(1)
@@ -527,7 +527,8 @@ class wsgame:
             self.sendcmd("buy 1 {0} from {1}".format(self.goods['<wht>铁镐</wht>']['id'],self.npcs[self.goods['<wht>铁镐</wht>']['sales']]))
             self.wakuang()
         else:
-            self.sendcmd("eq {0};wa".format(self.tiegao))
+            self.sendcmd("$wait 1000;$to 住房-练功房;dazuo")
+            #self.sendcmd("eq {0};wa".format(self.tiegao))
 
     def lianxi(self, e):
         if e['dialog'] =='shop':
