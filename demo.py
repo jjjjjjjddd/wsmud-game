@@ -15,10 +15,15 @@ class MyThread(threading.Thread):
         self.serverip = serverip
         self.acctoken = acctoken
         self.player = player
-
+        self.running = True
+    def getRun(self):
+        return self.running
     def run(self):
         wsg = wsgame(self.serverip, self.acctoken, self.player)
         wsg.start()
+        while self.running:
+            self.running = wsg.getrun()
+            time.sleep(1)
 
 
 if __name__ == "__main__":
@@ -51,10 +56,16 @@ if __name__ == "__main__":
     while (wsp.getStatic()):
         time.sleep(1)
     userlist = wsp.getList()
+    tlist = []
     for pid in userlist:
         # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
         wsg2 = MyThread(serverurl, utoken, pid)
         wsg2.start()
+        tlist.append(wsg2)
         time.sleep(1)
-
-    time.sleep(100000)
+        
+    for item in tlist:
+        if item.getRun():
+            time.sleep(1)
+        else:
+            del item

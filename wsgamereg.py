@@ -211,26 +211,26 @@ class wsgame:
                 if 'items' in e:
                     for item in e['items']:
                         if self.yjdid=='':
-                            if "养精丹" in item['name']:
+                            if  "养精丹" in item['name']:
                                 self.yjdid = item['id']
                                 print("养精丹id:"+self.yjdid)
                                 break
                         if self.tiegaoid=='':
-                            if self.tiegaoname in item['name']:
+                            if  self.tiegaoname in item['name']:
                                 self.tiegaoid = item['id']
                                 print("铁镐id:"+self.tiegaoid)
                                 break
                         if self.quanjiaoid=='':
-                            if self.quanjiaoname in item['name']:
+                            if  self.quanjiaoname in item['name']:
                                 self.quanjiaoid = item['id']
                                 print("拳脚id:"+self.quanjiaoid)
                                 break
                 if self.neigongid=='':
-                    if self.neigongname in e['name']:
+                    if  self.neigongname in e['name']:
                                 self.neigongid = e['id']
                                 print("内功id:"+self.neigongid)
                 if self.mtiegaoid=='':
-                    if self.tiegaoname in item['name']:
+                    if  self.tiegaoname in item['name']:
                         self.mtiegaoid = item['id']
                         print("铁镐id:"+self.mtiegaoid)
                         
@@ -305,19 +305,19 @@ class wsgame:
         print(e['items'][0]['cmd'])
         ws.send(e['items'][0]['cmd'])
         
-    def on_message(self,ws, message):
+    def on_message(self, message):
         if "{" and "}" in message: 
             e = self.convet_json(message)
             if e['type']=="dialog":
-                self.lianxi(ws,e)
+                self.lianxi(self.ws,e)
             if e['type']=="cmds":
-                self.smcmd(ws,e)
+                self.smcmd(self.ws,e)
             if e['type']=="items":
-                self.getsmid(ws,e)
+                self.getsmid(self.ws,e)
             if e['type']=="itemadd":
-                self.getmtrid(ws,e)
+                self.getmtrid(self.ws,e)
             if e['type']=="room":
-                self.saveStatic(ws,e)
+                self.saveStatic(self.ws,e)
         else:
             print(message)
             if "你今天已经签到了" in message:
@@ -326,10 +326,10 @@ class wsgame:
                 self.smflag = False
                 
                 
-    def on_error(self,ws, error):
+    def on_error(self, error):
         print(error)
 
-    def on_close(self,ws):
+    def on_close(self):
         print("### closed ###")
 
     def on_open(self,ws):
@@ -377,12 +377,12 @@ class wsgame:
 
     def start(self):
         websocket.enableTrace(True)
-        ws = websocket.WebSocketApp(self.serverip,
+        self.ws = websocket.WebSocketApp(self.serverip,
                                 on_message = self.on_message,
                                   on_error = self.on_error,
                                   on_close = self.on_close)
-        ws.on_open = self.on_open
-        ws.run_forever()
+        self.ws.on_open = self.on_open(self.ws)
+        self.ws.run_forever()
 
 
 
@@ -421,8 +421,9 @@ class GetLoginCookie:
                 self.u=item.value
 if __name__ == "__main__":
 
-    c = GetLoginCookie('','')
-    for i in range(30):
-        wsg= MyThread("ws://120.78.75.229:25631",c.getCookie())
+    c = GetLoginCookie('a0093','595902716')
+    for i in range(5):
+        wsg= MyThread("ws://120.79.75.160:25631/",c.getCookie())
         wsg.start()
+        time.sleep(5)
     time.sleep(100000)
