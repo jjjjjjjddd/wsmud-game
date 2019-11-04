@@ -7,7 +7,7 @@ import threading
 import time
 from wsgameLogin import  GetLoginInfo
 import sys
-
+from multiprocessing import Process,Pool
 
 class MyThread(threading.Thread):
     def __init__(self, serverip, acctoken, player):
@@ -25,6 +25,9 @@ class MyThread(threading.Thread):
             self.running = wsg.getrun()
             time.sleep(1)
 
+def run(serverurl, utoken, pid):
+    wsg2 = MyThread(serverurl, utoken, pid)
+    wsg2.start()
 
 if __name__ == "__main__":
     # 支持命令行 参数1 用户名 参数2 密码 参数3 区
@@ -56,16 +59,13 @@ if __name__ == "__main__":
     while (wsp.getStatic()):
         time.sleep(1)
     userlist = wsp.getList()
+    pp = Pool()
     tlist = []
     for pid in userlist:
         # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
-        wsg2 = MyThread(serverurl, utoken, pid)
-        wsg2.start()
-        tlist.append(wsg2)
-        time.sleep(1)
-        
-    for item in tlist:
-        if item.getRun():
-            time.sleep(1)
-        else:
-            del item
+        result = pp.apply_async(run,args=(serverurl, utoken, pid ,))
+        tlist.append(result)
+    pp.close()
+    pp.join()
+
+    print("操作结束")
