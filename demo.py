@@ -8,6 +8,7 @@ import time
 from wsgameLogin import  GetLoginInfo
 import sys
 from multiprocessing import Process,Pool
+import multiprocessing as mp
 
 class MyThread(threading.Thread):
     def __init__(self, serverip, acctoken, player):
@@ -30,6 +31,7 @@ def run(serverurl, utoken, pid):
     wsg2.start()
 
 if __name__ == "__main__":
+    mp.set_start_method('spawn')
     # 支持命令行 参数1 用户名 参数2 密码 参数3 区
     # 填服务器ip 默认1区
     zone = '1'
@@ -63,6 +65,7 @@ if __name__ == "__main__":
     tlist = []
     for pid in userlist:
         # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
+        print("start")
         result = pp.apply_async(run,args=(serverurl, utoken, pid ,))
         tlist.append(result)
     pp.close()
