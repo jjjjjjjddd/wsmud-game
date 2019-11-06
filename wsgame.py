@@ -766,6 +766,7 @@ class wsgame:
             self.wakuang()
             self.ws.close()
             self.logCat("线程结束")
+            self.ws.close()
         thread.start_new_thread(run, ())
 
     def start(self):
