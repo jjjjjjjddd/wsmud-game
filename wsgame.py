@@ -737,7 +737,6 @@ class wsgame:
         self.logCat(error)
 
     def on_close(self):
-        self.running = False
         self.logCat("### 断开连接 ###")
 
     def on_open(self):
