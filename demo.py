@@ -58,7 +58,10 @@ if __name__ == "__main__":
     pp = Pool()
     tlist = []
     for pid in userlist:
-        # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
+        # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid  
+        # 注意 若需要跳过某角色，请查询某角色id后， 输入  
+        # if pid == 'xxxxxxxx': 
+        #     continue;
         print("start")
         result = pp.apply_async(run,args=(serverurl, utoken, pid ,))
         tlist.append(result)
