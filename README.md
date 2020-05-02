@@ -9,7 +9,7 @@
 
 配置说明:
 
-
+*** 请不要输入中括号
 
 ```
 pip install websocket-client
@@ -18,6 +18,11 @@ python demo.py [username] [password] [zone]
 
 ```
 
+安卓使用termux 不支持pool 线程池,所以使用
+
+```
+python demo_termux.py [username] [password] [zone]
+```
 
 使用说明：
 
