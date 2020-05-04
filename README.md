@@ -18,6 +18,13 @@ python demo.py [username] [password] [zone]
 
 ```
 
+新增脚本用户控制从第x个角色到第y个角色的启动
+
+```
+python demo_select.py [username] [password] [zone] [start] [stop]
+
+```
+
 安卓使用termux 不支持pool 线程池,所以使用
 
 ```
