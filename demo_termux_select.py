@@ -32,10 +32,15 @@ if __name__ == "__main__":
     zone = '1'
     username = ''
     password = ''
-    if len(sys.argv) ==4:
+    # 默认启动第1个到第5个角色
+    startaccount = 1
+    stopaccount = 5
+    if len(sys.argv) ==6:
         username = sys.argv[1]
         password = sys.argv[2]
         zone =  sys.argv[3]
+        startaccount =  sys.argv[4]
+        stopaccount =  sys.argv[5]
     # 参数1:用户名
     # 参数2:密码
     c = GetLoginInfo(username, password)
@@ -60,13 +65,12 @@ if __name__ == "__main__":
     accountMax = 5
     nowNum = 0
     for pid in userlist:
-        if nowNum >= accountMax:
-            break
-        # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
-        wsg2 = MyThread(serverurl, utoken, pid)
-        wsg2.start()
-        tlist.append(wsg2)
-        time.sleep(1)
+        if nowNum >= int(startaccount) and nowNum <= int(stopaccount):
+            # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
+            wsg2 = MyThread(serverurl, utoken, pid)
+            wsg2.start()
+            tlist.append(wsg2)
+            time.sleep(1)
         nowNum = nowNum + 1
         
     for item in tlist:
