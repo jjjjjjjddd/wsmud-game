@@ -69,7 +69,7 @@ if __name__ == "__main__":
         print("start")
         result = pp.apply_async(run,args=(serverurl, utoken, pid ,))
         tlist.append(result)
-        nowNum++
+        nowNum = nowNum + 1
     pp.close()
     pp.join()
 
