@@ -57,7 +57,11 @@ if __name__ == "__main__":
         time.sleep(1)
     userlist = wsp.getList()
     tlist = []
+    accountMax = 5
+    nowNum = 0
     for pid in userlist:
+        if nowNum >= accountMax:
+            break
         # 参数1:服务器ip #参数2:用户accesstoken #参数3:pid
         wsg2 = MyThread(serverurl, utoken, pid)
         wsg2.start()
