@@ -378,6 +378,18 @@ class wsgame:
             "sales": "药铺老板 平一指",
             "place": "扬州城-药铺"
         },
+          "<hic>金创药</hic>": {
+            "id": None,
+            "type": "hic",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+        "<hic>引气丹</hic>": {
+            "id": None,
+            "type": "hic",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
         "<hig>养精丹</hig>": {
             "id": None,
             "type": "hig",
