@@ -758,7 +758,7 @@ class wsgame:
             self.logCat("日常完成:{0}".format(self.rc))
             self.baozi()
             self.qa()
-            self.yj()
+            #self.yj()
             while True:
                 if not self.rc:
                     if (self.bagitemsize - self.bagsize) < 5:
