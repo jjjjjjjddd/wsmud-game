@@ -2,8 +2,8 @@ name: 武神传说自动日常
 
 on:
     workflow_dispatch:
-    schedule:
-        - cron: "2 * * * *"
+#     schedule:
+#         - cron: "2 * * * *"
     watch:
         types: [started]
     repository_dispatch:
