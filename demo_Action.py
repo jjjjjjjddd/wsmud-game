@@ -29,7 +29,7 @@ if __name__ == "__main__":
     mp.set_start_method('spawn')
     # 支持命令行 参数1 用户名 参数2 密码 参数3 区
     # 填服务器ip 默认1区
-    myacc = os.environ["account"].split(' ')
+    myacc = os.environ["ACCOUNT"].split(' ')
     
     zone = myacc[2]
     username = myacc[0]
