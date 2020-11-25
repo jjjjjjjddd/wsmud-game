@@ -5,6 +5,7 @@ from wsgame import wsgame
 from wsgamePlayer import wsgamePlayer
 import threading
 import time
+import os
 from wsgameLogin import  GetLoginInfo
 import sys
 from multiprocessing import Process,Pool
