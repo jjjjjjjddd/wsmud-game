@@ -28,13 +28,11 @@ if __name__ == "__main__":
     mp.set_start_method('spawn')
     # 支持命令行 参数1 用户名 参数2 密码 参数3 区
     # 填服务器ip 默认1区
-    zone = '1'
-    username = ''
-    password = ''
-    if len(sys.argv) ==4:
-        username = sys.argv[1]
-        password = sys.argv[2]
-        zone =  sys.argv[3]
+    myacc = os.environ["account"].split(' ')
+    
+    zone = myacc[2]
+    username = myacc[0]
+    password = myacc[1]
     # 参数1:用户名
     # 参数2:密码
     c = GetLoginInfo(username, password)
