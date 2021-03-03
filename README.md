@@ -12,7 +12,7 @@
 *** 请不要输入中括号
 
 ```
-pip install websocket-client
+pip install websocket-client==0.56.0
 
 python demo.py [username] [password] [zone]
 
