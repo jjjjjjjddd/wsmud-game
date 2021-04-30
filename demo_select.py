@@ -17,8 +17,8 @@ class MyThread(threading.Thread):
         self.acctoken = acctoken
         self.player = player
     def run(self):
-        wsg = wsgame(self.serverip, self.acctoken, self.player)
-        wsg.start()
+        self.wsg = wsgame(self.serverip, self.acctoken, self.player)
+        self.wsg.start()
 
 def run(serverurl, utoken, pid):
     wsg2 = MyThread(serverurl, utoken, pid)
