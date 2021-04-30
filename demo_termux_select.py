@@ -19,8 +19,8 @@ class MyThread(threading.Thread):
     def getRun(self):
         return self.running
     def run(self):
-        wsg = wsgame(self.serverip, self.acctoken, self.player)
-        wsg.start()
+        self.wsg = wsgame(self.serverip, self.acctoken, self.player)
+        self.wsg.start()
         while self.running:
             self.running = wsg.getrun()
             time.sleep(1)
