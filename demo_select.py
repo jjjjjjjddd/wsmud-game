@@ -21,8 +21,7 @@ class MyThread(threading.Thread):
         self.wsg.start()
 
 def run(serverurl, utoken, pid):
-    wsg2 = MyThread(serverurl, utoken, pid)
-    wsg2.start()
+    MyThread(serverurl, utoken, pid).start()
 
 if __name__ == "__main__":
     mp.set_start_method('spawn')
