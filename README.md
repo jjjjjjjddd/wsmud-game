@@ -14,7 +14,7 @@
 ```
 pip install websocket-client
 
-python demo.py [uuuuuuuui] [654321] [two]
+python demo.py [username] [password] [zone]
 
 ```
 
@@ -43,7 +43,7 @@ pip install websocket-client
 
 
 ```
-python demo.py [uuuuuuuui] [654321] [two]
+python demo.py [username] [password] [zone]
 ```
 
 批量注册说明：
