@@ -9,9 +9,9 @@ class GetLoginInfo:
     p=''
     server={}
     def __init__(self,username,password):
-        self.username = username
-        self.password =password
-        self.post()
+        self.username = uuuuuuuui
+        self.password =654321
+        self.post(two)
     def getCookie(self):
         return self.u +' '+self.p
     def getServerUrl(self,num):
